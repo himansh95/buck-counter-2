@@ -2,6 +2,7 @@ package com.himanshu.buckcounter.business;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -85,10 +86,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.clear();
         }
         ArrayList<Transaction> transactions = new ArrayList<>();
-        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 230.0, new Date(), 1));
-        transactions.add(new Transaction(Transaction.TransactionType.CR, "opening balance", 3000.0, new Date(), 3));
-        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 2500.0, new Date(), 2));
-        transactions.add(new Transaction(Transaction.TransactionType.CONTRA, "ATM Withdrawal", 500.0, new Date(), 1, 2));
+        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 230.0, new Date(), getAccountIdByName("cash")));
+        transactions.add(new Transaction(Transaction.TransactionType.CR, "opening balance", 3000.0, new Date(), getAccountIdByName("credit card")));
+        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 2500.0, new Date(), getAccountIdByName("bank")));
+        transactions.add(new Transaction(Transaction.TransactionType.CONTRA, "ATM Withdrawal", 500.0, new Date(), getAccountIdByName("cash"), getAccountIdByName("bank")));
         for (Transaction transaction : transactions) {
             contentValues.put(KEY_TRANSACTIONS_TYPE, transaction.getTransactionType().getName());
             contentValues.put(KEY_TRANSACTIONS_PARTICULARS, transaction.getParticulars());
@@ -120,5 +121,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return currentDB;
         }
         return super.getReadableDatabase();
+    }
+
+    public int getAccountIdByName(String name) {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_ID + " from " + TABLE_ACCOUNTS +" where " + KEY_ACCOUNTS_NAME + " = ?", new String[]{name});
+        if (cursor.getCount() == 1 && cursor.moveToFirst()) {
+            return cursor.getInt(cursor.getColumnIndex(KEY_ACCOUNTS_ID));
+        }
+        return -1;
+    }
+
+    public String getAccountNameByID(int id) {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_NAME + " from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_ID + " = ?", new String[]{String.valueOf(id)});
+        if (cursor.getCount() == 1 && cursor.moveToFirst()) {
+            return cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME));
+        }
+        return null;
+    }
+
+    public double getTotalAccountBalance(){
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS, null);
+        if(cursor.moveToFirst()){
+            return cursor.getDouble(0);
+        }
+        return 0;
     }
 }
