@@ -39,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table " + TABLE_ACCOUNTS + "("
                 + KEY_ACCOUNTS_ID + " integer PRIMARY KEY AUTOINCREMENT,"
-                + KEY_ACCOUNTS_NAME + " text NOT NULL,"
+                + KEY_ACCOUNTS_NAME + " text NOT NULL UNIQUE,"
                 + KEY_ACCOUNTS_BALANCE + " real NOT  NULL"
                 + ")"
         );

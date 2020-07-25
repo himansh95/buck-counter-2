@@ -1,6 +1,6 @@
 create table ACCOUNTS(
 _id integer PRIMARY KEY AUTOINCREMENT,
-NAME text NOT NULL,
+NAME text NOT NULL UNIQUE,
 BALANCE real NOT  NULL
 )
 
