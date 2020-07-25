@@ -55,6 +55,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + KEY_TRANSACTIONS_CR_ACCOUNT_ID + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_ID + ")"
                 + ")"
         );
+        sqLiteDatabase.execSQL("create trigger if not exists " + TRIGGER_TRANSACTIONS_INSERT
+                + " after insert on " + TABLE_TRANSACTIONS + " for each row"
+                + " begin"
+                + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " + " + NEW + KEY_TRANSACTIONS_AMOUNT
+                + " where " + KEY_ACCOUNTS_ID + " = " + NEW + KEY_TRANSACTIONS_DR_ACCOUNT_ID
+                + " and (" + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.DR.getName() + "' or " + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
+                + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " - " + NEW + KEY_TRANSACTIONS_AMOUNT
+                + " where " + KEY_ACCOUNTS_ID + " = " + NEW + KEY_TRANSACTIONS_CR_ACCOUNT_ID
+                + " and (" + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
+                + " end"
+        );
+        sqLiteDatabase.execSQL("create trigger if not exists " + TRIGGER_TRANSACTIONS_DELETE
+                + " after delete on " + TABLE_TRANSACTIONS + " for each row"
+                + " begin"
+                + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " - " + OLD + KEY_TRANSACTIONS_AMOUNT
+                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_DR_ACCOUNT_ID
+                + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.DR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
+                + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " + " + OLD + KEY_TRANSACTIONS_AMOUNT
+                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_CR_ACCOUNT_ID
+                + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
+                + " end"
+        );
+        sqLiteDatabase.execSQL("create trigger if not exists " + TRIGGER_TRANSACTIONS_UPDATE_AMOUNT
+                + " after update of " + KEY_TRANSACTIONS_AMOUNT + " on " + TABLE_TRANSACTIONS + " for each row"
+                + " begin"
+                + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " - " + OLD + KEY_TRANSACTIONS_AMOUNT + " + " + NEW + KEY_TRANSACTIONS_AMOUNT
+                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_DR_ACCOUNT_ID
+                + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.DR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
+                + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " + " + OLD + KEY_TRANSACTIONS_AMOUNT + " - " + NEW + KEY_TRANSACTIONS_AMOUNT
+                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_CR_ACCOUNT_ID
+                + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
+                + " end"
+        );
         isCreating = true;
         currentDB = sqLiteDatabase;
         insertDummyContent(sqLiteDatabase);
