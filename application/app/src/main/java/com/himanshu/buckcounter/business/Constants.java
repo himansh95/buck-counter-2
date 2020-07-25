@@ -2,7 +2,7 @@ package com.himanshu.buckcounter.business;
 
 public class Constants {
     // database constants
-    static final int DB_VERSION = 2;
+    static final int DB_VERSION = 1;
     static final String DB_NAME = "BUCK_COUNTER_DB";
     static final String TABLE_ACCOUNTS = "ACCOUNTS";
     static final String TABLE_TRANSACTIONS = "TRANSACTIONS";
