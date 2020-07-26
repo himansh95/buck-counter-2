@@ -38,8 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table " + TABLE_ACCOUNTS + "("
-                + KEY_ACCOUNTS_ID + " integer PRIMARY KEY AUTOINCREMENT,"
-                + KEY_ACCOUNTS_NAME + " text NOT NULL UNIQUE,"
+                + KEY_ACCOUNTS_NAME + " text PRIMARY KEY,"
                 + KEY_ACCOUNTS_BALANCE + " real NOT  NULL"
                 + ")"
         );
@@ -49,20 +48,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_TRANSACTIONS_PARTICULARS + " text,"
                 + KEY_TRANSACTIONS_AMOUNT + " real NOT NULL,"
                 + KEY_TRANSACTIONS_TIMESTAMP + " datetime NOT NULL,"
-                + KEY_TRANSACTIONS_DR_ACCOUNT_ID + " integer,"
-                + KEY_TRANSACTIONS_CR_ACCOUNT_ID + " integer,"
-                + "FOREIGN KEY(" + KEY_TRANSACTIONS_DR_ACCOUNT_ID + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_ID + "),"
-                + "FOREIGN KEY(" + KEY_TRANSACTIONS_CR_ACCOUNT_ID + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_ID + ")"
+                + KEY_TRANSACTIONS_DR_ACCOUNT + " text,"
+                + KEY_TRANSACTIONS_CR_ACCOUNT + " text,"
+                + "FOREIGN KEY(" + KEY_TRANSACTIONS_DR_ACCOUNT + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_NAME + "),"
+                + "FOREIGN KEY(" + KEY_TRANSACTIONS_CR_ACCOUNT + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_NAME + ")"
                 + ")"
         );
         sqLiteDatabase.execSQL("create trigger if not exists " + TRIGGER_TRANSACTIONS_INSERT
                 + " after insert on " + TABLE_TRANSACTIONS + " for each row"
                 + " begin"
                 + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " + " + NEW + KEY_TRANSACTIONS_AMOUNT
-                + " where " + KEY_ACCOUNTS_ID + " = " + NEW + KEY_TRANSACTIONS_DR_ACCOUNT_ID
+                + " where " + KEY_ACCOUNTS_NAME + " = " + NEW + KEY_TRANSACTIONS_DR_ACCOUNT
                 + " and (" + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.DR.getName() + "' or " + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " - " + NEW + KEY_TRANSACTIONS_AMOUNT
-                + " where " + KEY_ACCOUNTS_ID + " = " + NEW + KEY_TRANSACTIONS_CR_ACCOUNT_ID
+                + " where " + KEY_ACCOUNTS_NAME + " = " + NEW + KEY_TRANSACTIONS_CR_ACCOUNT
                 + " and (" + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + NEW + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " end"
         );
@@ -70,10 +69,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + " after delete on " + TABLE_TRANSACTIONS + " for each row"
                 + " begin"
                 + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " - " + OLD + KEY_TRANSACTIONS_AMOUNT
-                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_DR_ACCOUNT_ID
+                + " where " + KEY_ACCOUNTS_NAME + " = " + OLD + KEY_TRANSACTIONS_DR_ACCOUNT
                 + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.DR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " + " + OLD + KEY_TRANSACTIONS_AMOUNT
-                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_CR_ACCOUNT_ID
+                + " where " + KEY_ACCOUNTS_NAME + " = " + OLD + KEY_TRANSACTIONS_CR_ACCOUNT
                 + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " end"
         );
@@ -81,10 +80,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + " after update of " + KEY_TRANSACTIONS_AMOUNT + " on " + TABLE_TRANSACTIONS + " for each row"
                 + " begin"
                 + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " - " + OLD + KEY_TRANSACTIONS_AMOUNT + " + " + NEW + KEY_TRANSACTIONS_AMOUNT
-                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_DR_ACCOUNT_ID
+                + " where " + KEY_ACCOUNTS_NAME + " = " + OLD + KEY_TRANSACTIONS_DR_ACCOUNT
                 + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.DR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " update " + TABLE_ACCOUNTS + " set " + KEY_ACCOUNTS_BALANCE + " = " + KEY_ACCOUNTS_BALANCE + " + " + OLD + KEY_TRANSACTIONS_AMOUNT + " - " + NEW + KEY_TRANSACTIONS_AMOUNT
-                + " where " + KEY_ACCOUNTS_ID + " = " + OLD + KEY_TRANSACTIONS_CR_ACCOUNT_ID
+                + " where " + KEY_ACCOUNTS_NAME + " = " + OLD + KEY_TRANSACTIONS_CR_ACCOUNT
                 + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " end"
         );
@@ -119,10 +118,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.clear();
         }
         ArrayList<Transaction> transactions = new ArrayList<>();
-        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 230.0, new Date(), getAccountIdByName("cash")));
-        transactions.add(new Transaction(Transaction.TransactionType.CR, "opening balance", 3000.0, new Date(), getAccountIdByName("credit card")));
-        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 2500.0, new Date(), getAccountIdByName("bank")));
-        transactions.add(new Transaction(Transaction.TransactionType.CONTRA, "ATM Withdrawal", 500.0, new Date(), getAccountIdByName("cash"), getAccountIdByName("bank")));
+        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 230.0, new Date(), "cash"));
+        transactions.add(new Transaction(Transaction.TransactionType.CR, "opening balance", 3000.0, new Date(), "credit card"));
+        transactions.add(new Transaction(Transaction.TransactionType.DR, "opening balance", 2500.0, new Date(), "bank"));
+        transactions.add(new Transaction(Transaction.TransactionType.CONTRA, "ATM Withdrawal", 500.0, new Date(), "cash", "bank"));
         for (Transaction transaction : transactions) {
             contentValues.put(KEY_TRANSACTIONS_TYPE, transaction.getTransactionType().getName());
             contentValues.put(KEY_TRANSACTIONS_PARTICULARS, transaction.getParticulars());
@@ -130,10 +129,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Date date = new Date();
             contentValues.put(KEY_TRANSACTIONS_TIMESTAMP, dateFormat.format(date));
             if (transaction.getTransactionType() == Transaction.TransactionType.DR || transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
-                contentValues.put(KEY_TRANSACTIONS_DR_ACCOUNT_ID, transaction.getDebitAccountId());
+                contentValues.put(KEY_TRANSACTIONS_DR_ACCOUNT, transaction.getDebitAccount());
             }
             if (transaction.getTransactionType() == Transaction.TransactionType.CR || transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
-                contentValues.put(KEY_TRANSACTIONS_CR_ACCOUNT_ID, transaction.getCreditAccountId());
+                contentValues.put(KEY_TRANSACTIONS_CR_ACCOUNT, transaction.getCreditAccount());
             }
             sqLiteDatabase.insert(TABLE_TRANSACTIONS, null, contentValues);
             contentValues.clear();
@@ -156,30 +155,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return super.getReadableDatabase();
     }
 
-    public int getAccountIdByName(String name) {
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_ID + " from " + TABLE_ACCOUNTS +" where " + KEY_ACCOUNTS_NAME + " = ?", new String[]{name});
-        if (cursor.getCount() == 1 && cursor.moveToFirst()) {
-            return cursor.getInt(cursor.getColumnIndex(KEY_ACCOUNTS_ID));
-        }
-        return -1;
-    }
-
-    public String getAccountNameByID(int id) {
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_NAME + " from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_ID + " = ?", new String[]{String.valueOf(id)});
-        if (cursor.getCount() == 1 && cursor.moveToFirst()) {
-            return cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME));
-        }
-        return null;
-    }
-
     public double getTotalAccountBalance(){
+        double total = 0.0;
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS, null);
         if(cursor.moveToFirst()){
-            return cursor.getDouble(0);
+            total = cursor.getDouble(0);
         }
-        return 0;
+        cursor.close();
+        return total;
     }
 }

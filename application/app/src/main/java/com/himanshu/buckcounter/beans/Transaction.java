@@ -8,58 +8,58 @@ public class Transaction {
     private String particulars;
     private double amount;
     private Date timestamp;
-    private int debitAccountId;
-    private int creditAccountId;
+    private String debitAccount;
+    private String creditAccount;
 
     public Transaction() {
     }
 
-    public Transaction(int id, TransactionType transactionType, String particulars, double amount, Date timestamp, int accountId) {
+    public Transaction(int id, TransactionType transactionType, String particulars, double amount, Date timestamp, String account) {
         this.id = id;
         this.transactionType = transactionType;
         this.particulars = particulars;
         this.amount = amount;
         this.timestamp = timestamp;
         if (transactionType == TransactionType.DR) {
-            this.debitAccountId = accountId;
+            this.debitAccount = account;
         } else if (transactionType == TransactionType.CR) {
-            this.creditAccountId = accountId;
+            this.creditAccount = account;
         } else if (transactionType == TransactionType.CONTRA) {
             throw new IllegalArgumentException("Use the constructor Transaction(int, TransactionType, String, double, Date, int, int) for TransactionType CONTRA");
         }
     }
 
-    public Transaction(TransactionType transactionType, String particulars, double amount, Date timestamp, int accountId) {
+    public Transaction(TransactionType transactionType, String particulars, double amount, Date timestamp, String account) {
         this.transactionType = transactionType;
         this.particulars = particulars;
         this.amount = amount;
         this.timestamp = timestamp;
         if (transactionType == TransactionType.DR) {
-            this.debitAccountId = accountId;
+            this.debitAccount = account;
         } else if (transactionType == TransactionType.CR) {
-            this.creditAccountId = accountId;
+            this.creditAccount = account;
         }  else if (transactionType == TransactionType.CONTRA) {
             throw new IllegalArgumentException("Use the constructor Transaction(TransactionType, String, double, Date, int, int) for TransactionType CONTRA");
         }
     }
 
-    public Transaction(TransactionType transactionType, String particulars, double amount, Date timestamp, int debitAccountId, int creditAccountId) {
+    public Transaction(TransactionType transactionType, String particulars, double amount, Date timestamp, String debitAccount, String creditAccount) {
         this.transactionType = transactionType;
         this.particulars = particulars;
         this.amount = amount;
         this.timestamp = timestamp;
-        this.debitAccountId = debitAccountId;
-        this.creditAccountId = creditAccountId;
+        this.debitAccount = debitAccount;
+        this.creditAccount = creditAccount;
     }
 
-    public Transaction(int id, TransactionType transactionType, String particulars, double amount, Date timestamp, int debitAccountId, int creditAccountId) {
+    public Transaction(int id, TransactionType transactionType, String particulars, double amount, Date timestamp, String debitAccount, String creditAccount) {
         this.id = id;
         this.transactionType = transactionType;
         this.particulars = particulars;
         this.amount = amount;
         this.timestamp = timestamp;
-        this.debitAccountId = debitAccountId;
-        this.creditAccountId = creditAccountId;
+        this.debitAccount = debitAccount;
+        this.creditAccount = creditAccount;
     }
 
     public int getId() {
@@ -102,6 +102,22 @@ public class Transaction {
         this.timestamp = timestamp;
     }
 
+    public String getDebitAccount() {
+        return debitAccount;
+    }
+
+    public void setDebitAccount(String debitAccount) {
+        this.debitAccount = debitAccount;
+    }
+
+    public String getCreditAccount() {
+        return creditAccount;
+    }
+
+    public void setCreditAccount(String creditAccount) {
+        this.creditAccount = creditAccount;
+    }
+
     @Override
     public String toString() {
         return "Transaction{" +
@@ -110,25 +126,9 @@ public class Transaction {
                 ", particulars='" + particulars + '\'' +
                 ", amount=" + amount +
                 ", timestamp=" + timestamp +
-                ", debitAccountId=" + debitAccountId +
-                ", creditAccountId=" + creditAccountId +
+                ", debitAccount=" + debitAccount +
+                ", creditAccount=" + creditAccount +
                 '}';
-    }
-
-    public int getDebitAccountId() {
-        return debitAccountId;
-    }
-
-    public void setDebitAccountId(int debitAccountId) {
-        this.debitAccountId = debitAccountId;
-    }
-
-    public int getCreditAccountId() {
-        return creditAccountId;
-    }
-
-    public void setCreditAccountId(int creditAccountId) {
-        this.creditAccountId = creditAccountId;
     }
 
     public enum TransactionType {
