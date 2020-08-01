@@ -9,9 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.beans.Transaction;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.himanshu.buckcounter.business.Constants.*;
 
@@ -153,6 +155,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return currentDB;
         }
         return super.getReadableDatabase();
+    }
+
+    public List<Transaction> getAllTransactions() {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        List<Transaction> transactions = new ArrayList<>();
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID, null);
+        try {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    transactions.add(new Transaction(
+                            cursor.getInt(cursor.getColumnIndex(KEY_TRANSACTIONS_ID)),
+                            Transaction.TransactionType.getTransactionType(cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_TYPE))),
+                            cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_PARTICULARS)),
+                            cursor.getDouble(cursor.getColumnIndex(KEY_TRANSACTIONS_AMOUNT)),
+                            dateFormat.parse(cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_TIMESTAMP))),
+                            cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_DR_ACCOUNT)),
+                            cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_CR_ACCOUNT))
+                    ));
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return transactions;
     }
 
     public double getTotalAccountBalance(){

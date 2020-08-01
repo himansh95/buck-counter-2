@@ -1,5 +1,6 @@
 package com.himanshu.buckcounter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -8,6 +9,8 @@ import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import com.google.android.material.navigation.NavigationView;
+import com.himanshu.buckcounter.business.DatabaseHelper;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        DatabaseHelper.getInstance(this).getReadableDatabase();
     }
 
     @Override
@@ -79,10 +83,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_accounts) {
 
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_transactions) {
+            startActivity(new Intent(this, TransactionsActivity.class));
         } else if (id == R.id.nav_tools) {
 
         } else if (id == R.id.nav_share) {

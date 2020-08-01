@@ -1,5 +1,8 @@
 package com.himanshu.buckcounter.business;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+
 public class Constants {
     // database constants
     static final int DB_VERSION = 1;
@@ -20,4 +23,7 @@ public class Constants {
     static final String TRIGGER_TRANSACTIONS_INSERT = "TRIGGER_TRANSACTIONS_INSERT";
     static final String TRIGGER_TRANSACTIONS_DELETE = "TRIGGER_TRANSACTIONS_DELETE";
     static final String TRIGGER_TRANSACTIONS_UPDATE_AMOUNT = "TRIGGER_TRANSACTIONS_UPDATE_AMOUNT";
+
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("₹ ##,##,##,##,###.##");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 }
