@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.himanshu.buckcounter.beans.Transaction;
+import com.himanshu.buckcounter.business.Util;
 
 import java.util.List;
 
@@ -36,8 +37,18 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         Transaction transaction = mValues.get(position);
         holder.mItem = transaction;
         holder.mTransactionAmount.setText(DECIMAL_FORMAT.format(transaction.getAmount()));
-        holder.mTransactionParticulars.setText(transaction.getParticulars());
+        holder.mTransactionParticulars.setText(new StringBuffer("\"").append(transaction.getParticulars()).append("\""));
         holder.mTransactionDate.setText(DATE_FORMAT.format(transaction.getTimestamp()));
+        if (transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
+            holder.mTransactionType.setImageResource(R.mipmap.type_contra);
+            holder.mTransactionAccount.setText(new StringBuffer(transaction.getCreditAccount()).append(Util.fromHtml("&nbsp;&#10132;&nbsp;")).append(transaction.getDebitAccount()));
+        } else if (transaction.getTransactionType() == Transaction.TransactionType.DR) {
+            holder.mTransactionType.setImageResource(R.mipmap.type_debit);
+            holder.mTransactionAccount.setText(transaction.getDebitAccount());
+        } else if (transaction.getTransactionType() == Transaction.TransactionType.CR) {
+            holder.mTransactionType.setImageResource(R.mipmap.type_credit);
+            holder.mTransactionAccount.setText(transaction.getCreditAccount());
+        }
     }
 
     @Override
