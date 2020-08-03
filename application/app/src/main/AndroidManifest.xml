@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".AccountsActivity"
+            android:label="@string/title_activity_accounts"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.himanshu.buckcounter.MainActivity" />
+        </activity>
+        <activity
             android:name=".TransactionsActivity"
             android:label="@string/title_activity_transactions"
             android:parentActivityName=".MainActivity"

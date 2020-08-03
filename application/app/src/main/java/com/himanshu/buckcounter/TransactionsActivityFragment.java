@@ -30,7 +30,7 @@ public class TransactionsActivityFragment extends Fragment {
 
         // set the adapter
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         List<Transaction> transactionList = DatabaseHelper.getInstance(context).getAllTransactions();
         TransactionRecyclerViewAdapter mTransactionRecyclerViewAdapter = new TransactionRecyclerViewAdapter(transactionList);

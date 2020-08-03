@@ -157,11 +157,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return super.getReadableDatabase();
     }
 
+    public List<Account> getAllAccounts() {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        List<Account> accounts = new ArrayList<>();
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_NAME, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                accounts.add(new Account(
+                        cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME)),
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_BALANCE))
+                ));
+            }
+            cursor.close();
+        }
+        return accounts;
+    }
+
     public List<Transaction> getAllTransactions() {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Transaction> transactions = new ArrayList<>();
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID, null);
-        try {
+        try (Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID, null)) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     transactions.add(new Transaction(
@@ -177,10 +192,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } catch (ParseException e) {
             e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
         return transactions;
     }
