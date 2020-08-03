@@ -40,13 +40,13 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         holder.mTransactionParticulars.setText(new StringBuffer("\"").append(transaction.getParticulars()).append("\""));
         holder.mTransactionDate.setText(DATE_FORMAT.format(transaction.getTimestamp()));
         if (transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
-            holder.mTransactionType.setImageResource(R.mipmap.type_contra);
+            holder.mTransactionType.setImageResource(R.mipmap.transaction_contra);
             holder.mTransactionAccount.setText(new StringBuffer(transaction.getCreditAccount()).append(Util.fromHtml("&nbsp;&#10132;&nbsp;")).append(transaction.getDebitAccount()));
         } else if (transaction.getTransactionType() == Transaction.TransactionType.DR) {
-            holder.mTransactionType.setImageResource(R.mipmap.type_debit);
+            holder.mTransactionType.setImageResource(R.mipmap.transaction_debit);
             holder.mTransactionAccount.setText(transaction.getDebitAccount());
         } else if (transaction.getTransactionType() == Transaction.TransactionType.CR) {
-            holder.mTransactionType.setImageResource(R.mipmap.type_credit);
+            holder.mTransactionType.setImageResource(R.mipmap.transaction_credit);
             holder.mTransactionAccount.setText(transaction.getCreditAccount());
         }
     }

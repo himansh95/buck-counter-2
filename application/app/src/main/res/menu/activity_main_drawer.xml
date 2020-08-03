@@ -11,7 +11,7 @@
         <item
             android:id="@+id/nav_transactions"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Transactions" />
+            android:title="@string/title_activity_transactions" />
         <item
             android:id="@+id/nav_accounts"
             android:icon="@drawable/ic_menu_slideshow"
