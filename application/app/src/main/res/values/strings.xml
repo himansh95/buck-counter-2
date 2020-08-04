@@ -15,4 +15,8 @@
     <string name="menu_send">Send</string>
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_activity_accounts">Accounts</string>
+    <string name="title_activity_add_account">Add Account</string>
+    <string name="init_with_zero_label">Initialize with ₹0 Balance</string>
+    <string name="add_account_name_hint">Enter account name</string>
+    <string name="add_account_balance_hint">Enter initial account balance</string>
 </resources>

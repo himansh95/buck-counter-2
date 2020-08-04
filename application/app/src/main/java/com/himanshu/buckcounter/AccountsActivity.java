@@ -1,9 +1,9 @@
 package com.himanshu.buckcounter;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 
@@ -14,9 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountsActivity extends AppCompatActivity {
+    List<Account> accountList;
+    AccountRecyclerViewAdapter mAccountRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +32,23 @@ public class AccountsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(AccountsActivity.this, AddAccount.class));
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         RecyclerView recyclerView = findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        List<Account> accountList = DatabaseHelper.getInstance(this).getAllAccounts();
-        AccountRecyclerViewAdapter mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList);
+        accountList = new ArrayList<>();
+        accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
+        mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList);
         recyclerView.setAdapter(mAccountRecyclerViewAdapter);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        accountList.clear();
+        accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
+        mAccountRecyclerViewAdapter.notifyDataSetChanged();
+    }
 }

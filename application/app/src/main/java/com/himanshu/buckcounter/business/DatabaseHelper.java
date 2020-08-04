@@ -37,6 +37,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
+    public void onConfigure(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.setForeignKeyConstraintsEnabled(true);
+        super.onConfigure(sqLiteDatabase);
+    }
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table " + TABLE_ACCOUNTS + "("
@@ -99,8 +104,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("drop table " + TABLE_ACCOUNTS);
         sqLiteDatabase.execSQL("drop table " + TABLE_TRANSACTIONS);
+        sqLiteDatabase.execSQL("drop table " + TABLE_ACCOUNTS);
         sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_INSERT);
         sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_DELETE);
         sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_UPDATE_AMOUNT);
@@ -205,5 +210,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return total;
+    }
+
+    public boolean insertAccount(Account account) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_ACCOUNTS_NAME, account.getName());
+        contentValues.put(KEY_ACCOUNTS_BALANCE, account.getBalance());
+        return sqLiteDatabase.insert(TABLE_ACCOUNTS, null, contentValues) > 0;
     }
 }
