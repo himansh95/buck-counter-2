@@ -48,13 +48,13 @@ public class AddAccount extends AppCompatActivity {
 
         if (accountName.getText() == null || accountName.getText().toString().isEmpty() || !accountName.getText().toString().matches("^[\\w\\s\\d]+$")) {
             validationFailed = true;
-            ((TextInputLayout)findViewById(R.id.add_account_name_container)).setError("Please enter a valid name for the account");
+            ((TextInputLayout)findViewById(R.id.add_account_name_container)).setError(getText(R.string.add_account_name_error));
         } else {
             ((TextInputLayout)findViewById(R.id.add_account_name_container)).setErrorEnabled(false);
         }
         if(!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().matches("^[0-9]+(\\.[0-9]+)?$"))) {
             validationFailed = true;
-            ((TextInputLayout)findViewById(R.id.add_account_balance_container)).setError("Please enter a valid starting balance");
+            ((TextInputLayout)findViewById(R.id.add_account_balance_container)).setError(getText(R.string.add_account_balance_error));
         } else {
             ((TextInputLayout)findViewById(R.id.add_account_balance_container)).setErrorEnabled(false);
         }
@@ -67,9 +67,9 @@ public class AddAccount extends AppCompatActivity {
         } else {
             accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), Double.valueOf(accountBalance.getText().toString().trim())));
         }
-        String responseText = "Account added successfully";
+        CharSequence responseText = getText(R.string.add_account_success);
         if (!accountAddedSuccessfully) {
-            responseText = "Account could not be added";
+            responseText = getText(R.string.add_account_failure);
         }
         Snackbar response = Snackbar.make(view, responseText, Snackbar.LENGTH_SHORT);
         response.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {

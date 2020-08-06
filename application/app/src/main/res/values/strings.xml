@@ -15,8 +15,13 @@
     <string name="menu_send">Send</string>
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_activity_accounts">Accounts</string>
+    <!-- Add Account -->
     <string name="title_activity_add_account">Add Account</string>
     <string name="init_with_zero_label">Initialize with ₹0 Balance</string>
     <string name="add_account_name_hint">Enter account name</string>
     <string name="add_account_balance_hint">Enter initial account balance</string>
+    <string name="add_account_name_error">Please enter a valid name for the account</string>
+    <string name="add_account_balance_error">Please enter a valid starting balance</string>
+    <string name="add_account_success">Account added successfully</string>
+    <string name="add_account_failure">Account could not be added</string>
 </resources>
