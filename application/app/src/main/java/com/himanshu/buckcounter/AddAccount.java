@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
+import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
+
 public class AddAccount extends AppCompatActivity {
 
     @Override
@@ -46,13 +49,13 @@ public class AddAccount extends AppCompatActivity {
         CheckBox initWithZero = findViewById(R.id.init_with_zero);
         boolean validationFailed = false;
 
-        if (accountName.getText() == null || accountName.getText().toString().isEmpty() || !accountName.getText().toString().matches("^[\\w\\s\\d]+$")) {
+        if (accountName.getText() == null || accountName.getText().toString().isEmpty() || !accountName.getText().toString().matches(VALID_TEXT_REGEX)) {
             validationFailed = true;
             ((TextInputLayout)findViewById(R.id.add_account_name_container)).setError(getText(R.string.add_account_name_error));
         } else {
             ((TextInputLayout)findViewById(R.id.add_account_name_container)).setErrorEnabled(false);
         }
-        if(!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().matches("^[0-9]+(\\.[0-9]+)?$"))) {
+        if(!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().matches(VALID_AMOUNT_REGEX))) {
             validationFailed = true;
             ((TextInputLayout)findViewById(R.id.add_account_balance_container)).setError(getText(R.string.add_account_balance_error));
         } else {

@@ -39,6 +39,7 @@ public class AccountsActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         accountList = new ArrayList<>();
+        accountList.add(new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
         accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
         mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList);
         recyclerView.setAdapter(mAccountRecyclerViewAdapter);
@@ -48,6 +49,7 @@ public class AccountsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         accountList.clear();
+        accountList.add(new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
         accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
         mAccountRecyclerViewAdapter.notifyDataSetChanged();
     }

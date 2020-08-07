@@ -219,4 +219,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(KEY_ACCOUNTS_BALANCE, account.getBalance());
         return sqLiteDatabase.insert(TABLE_ACCOUNTS, null, contentValues) > 0;
     }
+
+    public boolean insertTransaction(Transaction transaction) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_TRANSACTIONS_PARTICULARS, transaction.getParticulars());
+        contentValues.put(KEY_TRANSACTIONS_AMOUNT, transaction.getAmount());
+        contentValues.put(KEY_TRANSACTIONS_TYPE, transaction.getTransactionType().getName());
+        contentValues.put(KEY_TRANSACTIONS_TIMESTAMP, dateFormat.format(transaction.getTimestamp()));
+        contentValues.put(KEY_TRANSACTIONS_CR_ACCOUNT, transaction.getCreditAccount());
+        contentValues.put(KEY_TRANSACTIONS_DR_ACCOUNT, transaction.getDebitAccount());
+        return sqLiteDatabase.insert(TABLE_TRANSACTIONS, null, contentValues) > 0;
+    }
 }

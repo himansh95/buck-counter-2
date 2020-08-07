@@ -1,9 +1,13 @@
 package com.himanshu.buckcounter.business;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public class Util {
     @SuppressWarnings("deprecation")
@@ -18,5 +22,8 @@ public class Util {
         } else {
             return Html.fromHtml(html);
         }
+    }
+    public static void hideSoftKeyboard(Activity activity, View view) {
+        ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }

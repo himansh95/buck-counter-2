@@ -24,4 +24,12 @@
     <string name="add_account_balance_error">Please enter a valid starting balance</string>
     <string name="add_account_success">Account added successfully</string>
     <string name="add_account_failure">Account could not be added</string>
+    <!-- Add Transaction -->
+    <string name="title_activity_add_transaction">Add Transaction</string>
+    <string name="transaction_type_dr">Debit (Earning)</string>
+    <string name="transaction_type_cr">Credit (Spending)</string>
+    <string name="transaction_type_contra">Contra (Dual)</string>
+    <string name="add_transaction_particulars_hint">Enter transaction particulars</string>
+    <string name="select_debit_account_hint">Debit Account</string>
+    <string name="select_credit_account_hint">Credit Account</string>
 </resources>

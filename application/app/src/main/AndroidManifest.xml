@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".AddTransaction"
+            android:label="@string/title_activity_add_transaction"
+            android:parentActivityName=".TransactionsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.himanshu.buckcounter.TransactionsActivity" />
+        </activity>
+        <activity
             android:name=".AddAccount"
             android:label="@string/title_activity_add_account"
             android:parentActivityName=".AccountsActivity"
