@@ -94,12 +94,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + " and (" + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CR.getName() + "' or " + OLD + KEY_TRANSACTIONS_TYPE + " = '" + Transaction.TransactionType.CONTRA.getName() + "');"
                 + " end"
         );
+        /*
         isCreating = true;
         currentDB = sqLiteDatabase;
         insertDummyContent(sqLiteDatabase);
         // release var
         isCreating = false;
         currentDB = null;
+        */
     }
 
     @Override
@@ -230,5 +232,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(KEY_TRANSACTIONS_CR_ACCOUNT, transaction.getCreditAccount());
         contentValues.put(KEY_TRANSACTIONS_DR_ACCOUNT, transaction.getDebitAccount());
         return sqLiteDatabase.insert(TABLE_TRANSACTIONS, null, contentValues) > 0;
+    }
+
+    public boolean deleteTransaction(Transaction transaction) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        return sqLiteDatabase.delete(TABLE_TRANSACTIONS, KEY_TRANSACTIONS_ID + " = ?", new String[]{String.valueOf(transaction.getId())}) > 0;
+    }
+
+    public boolean editTransactionParticulars(Transaction transaction, String newParticulars) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_TRANSACTIONS_PARTICULARS, newParticulars);
+        return sqLiteDatabase.update(TABLE_TRANSACTIONS, contentValues, KEY_TRANSACTIONS_ID + " = ?", new String[]{String.valueOf(transaction.getId())}) > 0;
+    }
+
+    public boolean editTransactionAmount(Transaction transaction, double newAmount) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_TRANSACTIONS_AMOUNT, newAmount);
+        return sqLiteDatabase.update(TABLE_TRANSACTIONS, contentValues, KEY_TRANSACTIONS_ID + " = ?", new String[]{String.valueOf(transaction.getId())}) > 0;
     }
 }

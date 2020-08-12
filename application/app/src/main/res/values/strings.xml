@@ -30,6 +30,22 @@
     <string name="transaction_type_cr">Credit (Spending)</string>
     <string name="transaction_type_contra">Contra (Dual)</string>
     <string name="add_transaction_particulars_hint">Enter transaction particulars</string>
+    <string name="add_transaction_amount_hint">Enter transaction amount</string>
     <string name="select_debit_account_hint">Debit Account</string>
     <string name="select_credit_account_hint">Credit Account</string>
+    <string name="select_debit_account_error">Please select a debit account</string>
+    <string name="select_credit_account_error">Please select a credit account</string>
+    <string name="select_contra_account_error">Credit and Debit accounts cannot be the same</string>
+    <string name="add_transaction_particulars_error">Please enter a valid transaction particulars</string>
+    <string name="add_transaction_amount_error">Please enter a valid transaction amount</string>
+    <string name="add_transaction_success">Transaction added successfully</string>
+    <string name="add_transaction_failure">Transaction could not be added</string>
+    <!-- Edit Transaction -->
+    <string name="edit_transaction_amount">Edit Amount</string>
+    <string name="edit_transaction_particulars">Edit Particulars</string>
+    <string name="delete_transaction">Delete Transaction</string>
+    <string name="delete_transaction_confirm">Are you sure you want to delete this transaction?</string>
+    <string name="no_transactions_found">No Transactions Found!</string>
+    <string name="no_accounts_found">No Accounts Found!</string>
+    <string name="add_transaction_date_hint">Enter transaction date</string>
 </resources>

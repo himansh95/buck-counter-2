@@ -53,6 +53,16 @@
             android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_transaction_date_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/add_transaction_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_transaction_date_hint"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_transaction_particulars_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -71,6 +81,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:hint="Enter transaction amount"/>
+            android:hint="@string/add_transaction_amount_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

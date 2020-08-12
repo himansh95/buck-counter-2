@@ -6,11 +6,11 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.business.DatabaseHelper;
+import com.himanshu.buckcounter.view.EmptyRecyclerView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 
@@ -36,11 +36,14 @@ public class AccountsActivity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        RecyclerView recyclerView = findViewById(R.id.list);
+        EmptyRecyclerView recyclerView = findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setEmptyView(findViewById(R.id.empty_list_card));
         accountList = new ArrayList<>();
-        accountList.add(new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
         accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
+        if (accountList.size() > 0) {
+            accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
+        }
         mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList);
         recyclerView.setAdapter(mAccountRecyclerViewAdapter);
     }
@@ -49,8 +52,10 @@ public class AccountsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         accountList.clear();
-        accountList.add(new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
         accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
+        if (accountList.size() > 0) {
+            accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
+        }
         mAccountRecyclerViewAdapter.notifyDataSetChanged();
     }
 }

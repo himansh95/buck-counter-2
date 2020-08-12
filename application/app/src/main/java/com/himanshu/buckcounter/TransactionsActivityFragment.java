@@ -2,7 +2,6 @@ package com.himanshu.buckcounter;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
+import com.himanshu.buckcounter.view.EmptyRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ public class TransactionsActivityFragment extends Fragment {
     TransactionRecyclerViewAdapter mTransactionRecyclerViewAdapter;
     List<Transaction> transactionList;
     Context context;
+    View view;
 
     public TransactionsActivityFragment() {
     }
@@ -30,15 +31,17 @@ public class TransactionsActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_transactions, container, false);
+        view = inflater.inflate(R.layout.fragment_transactions, container, false);
 
         // set the adapter
         context = view.getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         transactionList = new ArrayList<>();
         transactionList.addAll(DatabaseHelper.getInstance(context).getAllTransactions());
-        mTransactionRecyclerViewAdapter = new TransactionRecyclerViewAdapter(transactionList);
+
+        EmptyRecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setEmptyView(view.findViewById(R.id.empty_list_card));
+        mTransactionRecyclerViewAdapter = new TransactionRecyclerViewAdapter(transactionList, context);
         recyclerView.setAdapter(mTransactionRecyclerViewAdapter);
 
         return view;

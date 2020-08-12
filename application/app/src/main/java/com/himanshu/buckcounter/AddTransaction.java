@@ -1,8 +1,10 @@
 package com.himanshu.buckcounter;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -12,17 +14,24 @@ import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 import com.himanshu.buckcounter.business.Util;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.RadioGroup;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import static com.himanshu.buckcounter.business.Constants.DATE_FORMAT;
 import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
 import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 
@@ -85,12 +94,25 @@ public class AddTransaction extends AppCompatActivity {
         }
         setUpAutoCompleteTextView((AutoCompleteTextView)findViewById(R.id.select_credit_account), accountNames);
         setUpAutoCompleteTextView((AutoCompleteTextView)findViewById(R.id.select_debit_account), accountNames);
+        TextInputEditText addTransactionDate = findViewById(R.id.add_transaction_date);
+        addTransactionDate.setText(DATE_FORMAT.format(new Date()));
+        addTransactionDate.setKeyListener(null);
+        addTransactionDate.setFocusable(false);
+        addTransactionDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.setFocusable(true);
+                DialogFragment newFragment = new DatePickerFragment(AddTransaction.this);
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
     }
 
     public void addTransactionClicked(View view) {
         int selectedTransactionType = ((RadioGroup)findViewById(R.id.add_transaction_type)).getCheckedRadioButtonId();
         AutoCompleteTextView selectCreditAccount = findViewById(R.id.select_credit_account);
         AutoCompleteTextView selectDebitAccount = findViewById(R.id.select_debit_account);
+        TextInputEditText transactionDate = findViewById(R.id.add_transaction_date);
         TextInputEditText transactionParticulars = findViewById(R.id.add_transaction_particulars);
         TextInputEditText transactionAmount = findViewById(R.id.add_transaction_amount);
         boolean validationFailed = false;
@@ -98,7 +120,7 @@ public class AddTransaction extends AppCompatActivity {
         if (selectedTransactionType == R.id.transaction_type_contra || selectedTransactionType == R.id.transaction_type_debit) {
             if (selectDebitAccount.getText().toString().isEmpty()) {
                 validationFailed = true;
-                ((TextInputLayout)findViewById(R.id.select_debit_account_container)).setError("Please select a debit account");
+                ((TextInputLayout)findViewById(R.id.select_debit_account_container)).setError(getText(R.string.select_debit_account_error));
             } else {
                 ((TextInputLayout)findViewById(R.id.select_debit_account_container)).setErrorEnabled(false);
             }
@@ -106,7 +128,7 @@ public class AddTransaction extends AppCompatActivity {
         if (selectedTransactionType == R.id.transaction_type_contra || selectedTransactionType == R.id.transaction_type_credit) {
             if (selectCreditAccount.getText().toString().isEmpty()) {
                 validationFailed = true;
-                ((TextInputLayout)findViewById(R.id.select_credit_account_container)).setError("Please select a credit account");
+                ((TextInputLayout)findViewById(R.id.select_credit_account_container)).setError(getText(R.string.select_credit_account_error));
             } else {
                 ((TextInputLayout)findViewById(R.id.select_credit_account_container)).setErrorEnabled(false);
             }
@@ -115,7 +137,7 @@ public class AddTransaction extends AppCompatActivity {
             if (!(selectCreditAccount.getText().toString().isEmpty() || selectDebitAccount.getText().toString().isEmpty())) {
                 if (selectCreditAccount.getText().toString().equals(selectDebitAccount.getText().toString())) {
                     validationFailed = true;
-                    ((TextInputLayout)findViewById(R.id.select_debit_account_container)).setError("Credit and Debit accounts cannot be the same");
+                    ((TextInputLayout)findViewById(R.id.select_debit_account_container)).setError(getText(R.string.select_contra_account_error));
                 } else {
                     ((TextInputLayout)findViewById(R.id.select_debit_account_container)).setErrorEnabled(false);
                 }
@@ -123,13 +145,13 @@ public class AddTransaction extends AppCompatActivity {
         }
         if (transactionParticulars.getText() == null || transactionParticulars.getText().toString().isEmpty() || !transactionParticulars.getText().toString().matches(VALID_TEXT_REGEX)) {
             validationFailed = true;
-            ((TextInputLayout)findViewById(R.id.add_transaction_particulars_container)).setError("Please enter a valid transaction particulars");
+            ((TextInputLayout)findViewById(R.id.add_transaction_particulars_container)).setError(getText(R.string.add_transaction_particulars_error));
         } else {
             ((TextInputLayout)findViewById(R.id.add_transaction_particulars_container)).setErrorEnabled(false);
         }
         if (transactionAmount.getText() == null || transactionAmount.getText().toString().isEmpty() || !transactionAmount.getText().toString().matches(VALID_AMOUNT_REGEX)) {
             validationFailed = true;
-            ((TextInputLayout)findViewById(R.id.add_transaction_amount_container)).setError("Please enter a valid transaction amount");
+            ((TextInputLayout)findViewById(R.id.add_transaction_amount_container)).setError(getText(R.string.add_transaction_amount_error));
         } else {
             ((TextInputLayout)findViewById(R.id.add_transaction_amount_container)).setErrorEnabled(false);
         }
@@ -137,39 +159,43 @@ public class AddTransaction extends AppCompatActivity {
             return;
         }
         boolean transactionAddedSuccessfully = false;
-        switch (selectedTransactionType) {
-            case R.id.transaction_type_contra:
-                transactionAddedSuccessfully = DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
-                        Transaction.TransactionType.CONTRA,
-                        transactionParticulars.getText().toString().trim().toLowerCase(),
-                        Double.valueOf(transactionAmount.getText().toString().trim()),
-                        new Date(),
-                        selectDebitAccount.getText().toString().toLowerCase(),
-                        selectCreditAccount.getText().toString().toLowerCase()
-                ));
-                break;
-            case R.id.transaction_type_debit:
-                transactionAddedSuccessfully = DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
-                        Transaction.TransactionType.DR,
-                        transactionParticulars.getText().toString().trim().toLowerCase(),
-                        Double.valueOf(transactionAmount.getText().toString().trim()),
-                        new Date(),
-                        selectDebitAccount.getText().toString().toLowerCase()
-                ));
-                break;
-            case R.id.transaction_type_credit:
-                transactionAddedSuccessfully = DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
-                        Transaction.TransactionType.CR,
-                        transactionParticulars.getText().toString().trim().toLowerCase(),
-                        Double.valueOf(transactionAmount.getText().toString().trim()),
-                        new Date(),
-                        selectCreditAccount.getText().toString().toLowerCase()
-                ));
-                break;
+        try {
+            switch (selectedTransactionType) {
+                case R.id.transaction_type_contra:
+                    transactionAddedSuccessfully = DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
+                            Transaction.TransactionType.CONTRA,
+                            transactionParticulars.getText().toString().trim().toLowerCase(),
+                            Double.valueOf(transactionAmount.getText().toString().trim()),
+                            DATE_FORMAT.parse(transactionDate.getText().toString().trim()),
+                            selectDebitAccount.getText().toString().toLowerCase(),
+                            selectCreditAccount.getText().toString().toLowerCase()
+                    ));
+                    break;
+                case R.id.transaction_type_debit:
+                    transactionAddedSuccessfully = DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
+                            Transaction.TransactionType.DR,
+                            transactionParticulars.getText().toString().trim().toLowerCase(),
+                            Double.valueOf(transactionAmount.getText().toString().trim()),
+                            DATE_FORMAT.parse(transactionDate.getText().toString().trim()),
+                            selectDebitAccount.getText().toString().toLowerCase()
+                    ));
+                    break;
+                case R.id.transaction_type_credit:
+                    transactionAddedSuccessfully = DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
+                            Transaction.TransactionType.CR,
+                            transactionParticulars.getText().toString().trim().toLowerCase(),
+                            Double.valueOf(transactionAmount.getText().toString().trim()),
+                            DATE_FORMAT.parse(transactionDate.getText().toString().trim()),
+                            selectCreditAccount.getText().toString().toLowerCase()
+                    ));
+                    break;
+            }
+        } catch (ParseException ex) {
+            ex.printStackTrace();
         }
-        CharSequence responseText = "Transaction added successfully";
+        CharSequence responseText = getText(R.string.add_transaction_success);
         if(!transactionAddedSuccessfully) {
-            responseText = "Transaction could not be added";
+            responseText = getText(R.string.add_transaction_failure);
         }
         Snackbar response = Snackbar.make(view, responseText, Snackbar.LENGTH_SHORT);
         response.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -180,5 +206,30 @@ public class AddTransaction extends AppCompatActivity {
             }
         });
         response.show();
+    }
+
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        Activity activity;
+
+        DatePickerFragment(Activity activity){
+            this.activity = activity;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            return new DatePickerDialog(getActivity(), android.R.style.Theme_Material_Light_Dialog_Alert, this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            Calendar calendar = new GregorianCalendar(year, month, day);
+            String date = DATE_FORMAT.format(calendar.getTime());
+            ((TextInputEditText)activity.findViewById(R.id.add_transaction_date)).setText(date);
+        }
     }
 }
