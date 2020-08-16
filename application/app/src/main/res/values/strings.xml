@@ -2,19 +2,24 @@
     <string name="app_name">Buck Counter</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Buck Counter</string>
+    <string name="nav_header_subtitle">buck.counter.support@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
+    <string name="menu_export">Export Data</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_activity_accounts">Accounts</string>
+    <string name="storage_access_required">Storage access is required to export data</string>
+    <string name="storage_access_denied">Storage access denied</string>
+    <string name="export_success_message">Data is exported successfully</string>
+    <string name="export_failure_message">Data was not exported</string>
+    <string name="export_progress_message">Data is being exported</string>
     <!-- Add Account -->
     <string name="title_activity_add_account">Add Account</string>
     <string name="init_with_zero_label">Initialize with ₹0 Balance</string>
@@ -48,4 +53,15 @@
     <string name="no_transactions_found">No Transactions Found!</string>
     <string name="no_accounts_found">No Accounts Found!</string>
     <string name="add_transaction_date_hint">Enter transaction date</string>
+    <string name="edit_account_name">Edit Name</string>
+    <string name="title_activity_export_xls">Export To Excel</string>
+    <!-- Export Strings -->
+    <string name="export_directory_name">BuckCounter</string>
+    <string name="export_file_name">Accounts_%d.xls</string>
+    <string name="export_sheet_name">Transactions</string>
+    <string name="export_sheet_header_debit">Debit</string>
+    <string name="export_sheet_header_credit">Credit</string>
+    <string name="export_sheet_header_date">Date</string>
+    <string name="export_sheet_header_particulars">Particulars</string>
+    <string name="export_sheet_header_balance">Balance</string>
 </resources>

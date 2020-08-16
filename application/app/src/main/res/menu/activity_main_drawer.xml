@@ -17,9 +17,9 @@
             android:icon="@drawable/database"
             android:title="@string/title_activity_transactions" />
         <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:id="@+id/nav_export"
+            android:icon="@drawable/database_export"
+            android:title="@string/menu_export" />
     </group>
 
     <item android:title="Communicate">

@@ -57,8 +57,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_TRANSACTIONS_TIMESTAMP + " datetime NOT NULL,"
                 + KEY_TRANSACTIONS_DR_ACCOUNT + " text,"
                 + KEY_TRANSACTIONS_CR_ACCOUNT + " text,"
-                + "FOREIGN KEY(" + KEY_TRANSACTIONS_DR_ACCOUNT + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_NAME + "),"
-                + "FOREIGN KEY(" + KEY_TRANSACTIONS_CR_ACCOUNT + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_NAME + ")"
+                + "FOREIGN KEY(" + KEY_TRANSACTIONS_DR_ACCOUNT + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_NAME + ") ON UPDATE CASCADE ON DELETE CASCADE,"
+                + "FOREIGN KEY(" + KEY_TRANSACTIONS_CR_ACCOUNT + ") REFERENCES " + TABLE_ACCOUNTS + "(" + KEY_ACCOUNTS_NAME + ") ON UPDATE CASCADE ON DELETE CASCADE"
                 + ")"
         );
         sqLiteDatabase.execSQL("create trigger if not exists " + TRIGGER_TRANSACTIONS_INSERT
@@ -183,7 +183,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Transaction> getAllTransactions() {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Transaction> transactions = new ArrayList<>();
-        try (Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID, null)) {
+        try (Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID + " desc", null)) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     transactions.add(new Transaction(
@@ -251,5 +251,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_TRANSACTIONS_AMOUNT, newAmount);
         return sqLiteDatabase.update(TABLE_TRANSACTIONS, contentValues, KEY_TRANSACTIONS_ID + " = ?", new String[]{String.valueOf(transaction.getId())}) > 0;
+    }
+
+    public boolean editAccountName(Account account, String newName) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_ACCOUNTS_NAME, newName);
+        return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
     }
 }

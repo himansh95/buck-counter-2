@@ -44,7 +44,7 @@ public class AccountsActivity extends AppCompatActivity {
         if (accountList.size() > 0) {
             accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
         }
-        mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList);
+        mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList, this);
         recyclerView.setAdapter(mAccountRecyclerViewAdapter);
     }
 

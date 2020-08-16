@@ -103,6 +103,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
                                         }
                                         String newParticulars = transactionParticulars.getText().toString().trim().toLowerCase();
                                         if (newParticulars.equals(transaction.getParticulars())) {
+                                            editParticulars.dismiss();
                                             return;
                                         }
                                         boolean editParticularsSuccessful = DatabaseHelper.getInstance(context).editTransactionParticulars(transaction, newParticulars);
@@ -142,6 +143,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
                                         }
                                         double newAmount = Double.valueOf(transactionAmount.getText().toString().trim().toLowerCase());
                                         if (newAmount == transaction.getAmount()) {
+                                            editAmount.dismiss();
                                             return;
                                         }
                                         boolean editParticularsSuccessful = DatabaseHelper.getInstance(context).editTransactionAmount(transaction, newAmount);

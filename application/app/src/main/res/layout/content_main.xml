@@ -28,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="9"
+                android:background="@color/home_color_1"
                 android:src="@drawable/account_bank" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -36,6 +37,8 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/home_color_1"
                 android:text="@string/title_activity_accounts"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -60,6 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="9"
+                android:background="@color/home_color_2"
                 android:src="@drawable/database" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -68,6 +72,8 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/home_color_2"
                 android:text="@string/title_activity_transactions"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -92,7 +98,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="9"
-                android:background="#555"
+                android:background="@color/home_color_3"
                 android:src="@drawable/bank_plus" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -101,6 +107,8 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/home_color_3"
                 android:text="@string/title_activity_add_account"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -125,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="9"
-                android:background="#555"
+                android:background="@color/home_color_4"
                 android:src="@drawable/database_plus" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -134,6 +142,8 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/home_color_4"
                 android:text="@string/title_activity_add_transaction"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

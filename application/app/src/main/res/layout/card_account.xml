@@ -11,6 +11,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/account_context_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/sharp_more_vert_24"
+                android:layout_margin="5dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_name"
                 android:layout_width="match_parent"
