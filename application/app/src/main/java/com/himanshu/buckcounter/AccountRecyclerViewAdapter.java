@@ -52,6 +52,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         if (position == 0) {
             holder.mAccountContextMenu.setVisibility(View.INVISIBLE);
         } else {
+            holder.mAccountContextMenu.setVisibility(View.VISIBLE);
             holder.mAccountContextMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -62,6 +63,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         if (account.isCreditCard()) {
             ((TextView)holder.mCreditCardDetails.findViewById(R.id.credit_limit)).setText(DECIMAL_FORMAT.format(account.getCreditLimit()));
             ((TextView)holder.mCreditCardDetails.findViewById(R.id.remaining_credit_limit)).setText(DECIMAL_FORMAT.format(account.getCreditLimit() + account.getBalance()));
+            holder.mCreditCardDetails.setVisibility(View.VISIBLE);
         } else {
             holder.mCreditCardDetails.setVisibility(View.GONE);
         }
