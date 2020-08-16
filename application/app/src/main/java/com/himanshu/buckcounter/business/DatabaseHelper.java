@@ -46,7 +46,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table " + TABLE_ACCOUNTS + "("
                 + KEY_ACCOUNTS_NAME + " text PRIMARY KEY,"
-                + KEY_ACCOUNTS_BALANCE + " real NOT  NULL"
+                + KEY_ACCOUNTS_BALANCE + " real NOT NULL,"
+                + KEY_ACCOUNTS_IS_CREDIT_CARD + " integer DEFAULT 0,"
+                + KEY_ACCOUNTS_CREDIT_LIMIT + " real"
                 + ")"
         );
         sqLiteDatabase.execSQL("create table " + TABLE_TRANSACTIONS + "("
@@ -172,7 +174,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 accounts.add(new Account(
                         cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME)),
-                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_BALANCE))
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_BALANCE)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_ACCOUNTS_IS_CREDIT_CARD)) == 1,
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_CREDIT_LIMIT))
                 ));
             }
             cursor.close();
@@ -219,6 +223,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_ACCOUNTS_NAME, account.getName());
         contentValues.put(KEY_ACCOUNTS_BALANCE, account.getBalance());
+        contentValues.put(KEY_ACCOUNTS_IS_CREDIT_CARD, account.isCreditCard() ? 1 : 0);
+        contentValues.put(KEY_ACCOUNTS_CREDIT_LIMIT, account.getCreditLimit());
         return sqLiteDatabase.insert(TABLE_ACCOUNTS, null, contentValues) > 0;
     }
 

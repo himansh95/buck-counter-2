@@ -36,4 +36,22 @@
             android:inputType="numberDecimal"
             android:hint="@string/add_account_balance_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/is_credit_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/is_credit_card_label"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_credit_limit_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/add_credit_limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="@string/add_credit_limit_hint"/>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

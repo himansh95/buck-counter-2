@@ -11,6 +11,8 @@ public class Constants {
     static final String TABLE_TRANSACTIONS = "TRANSACTIONS";
     static final String KEY_ACCOUNTS_NAME = "NAME";
     static final String KEY_ACCOUNTS_BALANCE = "BALANCE";
+    static final String KEY_ACCOUNTS_IS_CREDIT_CARD = "IS_CREDIT_CARD";
+    static final String KEY_ACCOUNTS_CREDIT_LIMIT = "CREDIT_LIMIT";
     static final String KEY_TRANSACTIONS_ID = "_id";
     static final String KEY_TRANSACTIONS_TYPE = "TYPE";
     static final String KEY_TRANSACTIONS_PARTICULARS = "PARTICULARS";

@@ -224,7 +224,7 @@ public class ExportXLSActivity extends AppCompatActivity {
 
             currentRowIndex = currentDebitRow >= currentCreditRow ? currentDebitRow : currentCreditRow;
 
-            row = sheet.createRow(currentRowIndex);
+            row = sheet.createRow(currentRowIndex++);
 
             cell = row.createCell(creditColumns.get(headerDate));
             cell.setCellStyle(cellStyle);
@@ -237,6 +237,30 @@ public class ExportXLSActivity extends AppCompatActivity {
                 cell = row.createCell(creditColumns.get(account.getName().toUpperCase()));
                 cell.setCellValue(DECIMAL_FORMAT.format(account.getBalance()));
                 cell.setCellStyle(cellStyle);
+            }
+
+            row = sheet.createRow(currentRowIndex++);
+
+            cell = row.createCell(creditColumns.get(headerParticulars));
+            cell.setCellValue(getString(R.string.export_sheet_credit_limit));
+
+            for(Account account: accounts) {
+                if (account.isCreditCard()) {
+                    cell = row.createCell(creditColumns.get(account.getName().toUpperCase()));
+                    cell.setCellValue(DECIMAL_FORMAT.format(account.getCreditLimit()));
+                }
+            }
+
+            row = sheet.createRow(currentRowIndex++);
+
+            cell = row.createCell(creditColumns.get(headerParticulars));
+            cell.setCellValue(getString(R.string.export_sheet_remaining_credit_limit));
+
+            for(Account account: accounts) {
+                if (account.isCreditCard()) {
+                    cell = row.createCell(creditColumns.get(account.getName().toUpperCase()));
+                    cell.setCellValue(DECIMAL_FORMAT.format(account.getCreditLimit() + account.getBalance()));
+                }
             }
 
             File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), getString(R.string.export_directory_name));

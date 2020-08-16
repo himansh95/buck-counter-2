@@ -1,6 +1,8 @@
 create table ACCOUNTS(
 NAME text PRIMARY KEY,
-BALANCE real NOT  NULL
+BALANCE real NOT NULL,
+IS_CREDIT_CARD integer DEFAULT 0,
+CREDIT_LIMIT real
 )
 
 create table TRANSACTIONS(

@@ -66,4 +66,11 @@
     <string name="export_sheet_header_date">Date</string>
     <string name="export_sheet_header_particulars">Particulars</string>
     <string name="export_sheet_header_balance">Balance</string>
+    <string name="export_sheet_credit_limit">Credit Limit</string>
+    <string name="export_sheet_remaining_credit_limit">Remaining Credit Limit</string>
+    <string name="is_credit_card_label">Is credit card?</string>
+    <string name="add_credit_limit_hint">Enter credit limit</string>
+    <string name="add_credit_limit_error">Please enter a valid credit limit</string>
+    <string name="credit_limit_label">Credit Limit</string>
+    <string name="remaining_credit_limit_label">Remaining Credit Limit</string>
 </resources>

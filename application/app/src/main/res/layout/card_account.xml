@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -36,8 +37,57 @@
                 android:fontFamily="serif-monospace"
                 android:textSize="30sp"
                 android:textAlignment="center"
-                android:layout_below="@id/account_name"
-                android:layout_alignParentBottom="true"/>
+                android:layout_below="@id/account_name"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/credit_card_details"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:layout_below="@id/account_balance"
+                android:layout_alignParentBottom="true">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/credit_limit_label"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/remaining_credit_limit_label"
+                    app:layout_constraintBottom_toTopOf="@id/credit_limit"
+                    android:labelFor="@+id/credit_limit"
+                    android:textColor="@color/colorAccent"
+                    android:text="@string/credit_limit_label"
+                    android:textSize="12sp"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/credit_limit"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/credit_limit_label"
+                    app:layout_constraintEnd_toStartOf="@id/remaining_credit_limit"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/remaining_credit_limit_label"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:textAlignment="viewEnd"
+                    app:layout_constraintStart_toEndOf="@id/credit_limit_label"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/remaining_credit_limit"
+                    android:labelFor="@+id/remaining_credit_limit"
+                    android:textColor="@color/colorAccent"
+                    android:text="@string/remaining_credit_limit_label"
+                    android:textSize="12sp"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/remaining_credit_limit"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:textAlignment="viewEnd"
+                    app:layout_constraintStart_toEndOf="@id/credit_limit"
+                    app:layout_constraintTop_toBottomOf="@id/remaining_credit_limit_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

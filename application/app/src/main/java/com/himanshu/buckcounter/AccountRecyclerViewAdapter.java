@@ -59,6 +59,12 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                 }
             });
         }
+        if (account.isCreditCard()) {
+            ((TextView)holder.mCreditCardDetails.findViewById(R.id.credit_limit)).setText(DECIMAL_FORMAT.format(account.getCreditLimit()));
+            ((TextView)holder.mCreditCardDetails.findViewById(R.id.remaining_credit_limit)).setText(DECIMAL_FORMAT.format(account.getCreditLimit() + account.getBalance()));
+        } else {
+            holder.mCreditCardDetails.setVisibility(View.GONE);
+        }
     }
 
     private void showPopupMenu(View view, final Account account, final int position) {
@@ -150,6 +156,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         public final TextView mAccountName;
         public final TextView mAccountBalance;
         public final ImageView mAccountContextMenu;
+        public final View mCreditCardDetails;
         public Account mItem;
 
         public ViewHolder(@NonNull View view) {
@@ -158,6 +165,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
             mAccountName = view.findViewById(R.id.account_name);
             mAccountBalance = view.findViewById(R.id.account_balance);
             mAccountContextMenu = view.findViewById(R.id.account_context_menu);
+            mCreditCardDetails = view.findViewById(R.id.credit_card_details);
         }
     }
 }

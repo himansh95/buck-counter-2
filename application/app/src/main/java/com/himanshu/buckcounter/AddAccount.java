@@ -40,6 +40,18 @@ public class AddAccount extends AppCompatActivity {
                 }
             }
         });
+        CheckBox isCreditCard = findViewById(R.id.is_credit_card);
+        isCreditCard.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                TextInputLayout textInputLayout = findViewById(R.id.add_credit_limit_container);
+                if (b) {
+                    textInputLayout.setVisibility(View.VISIBLE);
+                } else {
+                    textInputLayout.setVisibility(View.GONE);
+                }
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -47,25 +59,37 @@ public class AddAccount extends AppCompatActivity {
         TextInputEditText accountName = findViewById(R.id.add_account_name);
         TextInputEditText accountBalance = findViewById(R.id.add_account_balance);
         CheckBox initWithZero = findViewById(R.id.init_with_zero);
+        CheckBox isCreditCard = findViewById(R.id.is_credit_card);
+        TextInputEditText creditLimit = findViewById(R.id.add_credit_limit);
         boolean validationFailed = false;
 
         if (accountName.getText() == null || accountName.getText().toString().isEmpty() || !accountName.getText().toString().matches(VALID_TEXT_REGEX)) {
             validationFailed = true;
-            ((TextInputLayout)findViewById(R.id.add_account_name_container)).setError(getText(R.string.add_account_name_error));
+            ((TextInputLayout) findViewById(R.id.add_account_name_container)).setError(getText(R.string.add_account_name_error));
         } else {
-            ((TextInputLayout)findViewById(R.id.add_account_name_container)).setErrorEnabled(false);
+            ((TextInputLayout) findViewById(R.id.add_account_name_container)).setErrorEnabled(false);
         }
-        if(!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().matches(VALID_AMOUNT_REGEX))) {
+        if (!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().trim().matches(VALID_AMOUNT_REGEX))) {
             validationFailed = true;
-            ((TextInputLayout)findViewById(R.id.add_account_balance_container)).setError(getText(R.string.add_account_balance_error));
+            ((TextInputLayout) findViewById(R.id.add_account_balance_container)).setError(getText(R.string.add_account_balance_error));
         } else {
-            ((TextInputLayout)findViewById(R.id.add_account_balance_container)).setErrorEnabled(false);
+            ((TextInputLayout) findViewById(R.id.add_account_balance_container)).setErrorEnabled(false);
         }
-        if(validationFailed) {
+        if (isCreditCard.isChecked() && (creditLimit.getText() == null || creditLimit.getText().toString().isEmpty() || !creditLimit.getText().toString().trim().matches(VALID_AMOUNT_REGEX))) {
+            validationFailed = true;
+            ((TextInputLayout) findViewById(R.id.add_credit_limit_container)).setError(getText(R.string.add_credit_limit_error));
+        } else {
+            ((TextInputLayout) findViewById(R.id.add_credit_limit_container)).setErrorEnabled(false);
+        }
+        if (validationFailed) {
             return;
         }
         boolean accountAddedSuccessfully;
-        if (initWithZero.isChecked()) {
+        if (initWithZero.isChecked() && isCreditCard.isChecked()) {
+            accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), true, Double.valueOf(creditLimit.getText().toString().trim())));
+        } else if (isCreditCard.isChecked()) {
+            accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), Double.valueOf(accountBalance.getText().toString().trim()), true, Double.valueOf(creditLimit.getText().toString().trim())));
+        } else if (initWithZero.isChecked()) {
             accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase()));
         } else {
             accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), Double.valueOf(accountBalance.getText().toString().trim())));
