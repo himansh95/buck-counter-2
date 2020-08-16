@@ -49,12 +49,16 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         holder.mItem = account;
         holder.mAccountName.setText(account.getName());
         holder.mAccountBalance.setText(DECIMAL_FORMAT.format(account.getBalance()));
-        holder.mAccountContextMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupMenu(holder.mAccountContextMenu, account, position);
-            }
-        });
+        if (position == 0) {
+            holder.mAccountContextMenu.setVisibility(View.INVISIBLE);
+        } else {
+            holder.mAccountContextMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showPopupMenu(holder.mAccountContextMenu, account, position);
+                }
+            });
+        }
     }
 
     private void showPopupMenu(View view, final Account account, final int position) {
@@ -94,7 +98,6 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                             return;
                                         }
                                         boolean editNameSuccessful = DatabaseHelper.getInstance(context).editAccountName(account, newName);
-                                        Toast.makeText(context, "editNameSuccessful: " + editNameSuccessful, Toast.LENGTH_LONG).show();
                                         if (editNameSuccessful) {
                                             mValues.get(position).setName(newName);
                                             AccountRecyclerViewAdapter.this.notifyItemChanged(position);
@@ -105,6 +108,29 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                             }
                         });
                         editName.show();
+                        return true;
+                    case R.id.delete_account:
+                        AlertDialog deleteAccount = new AlertDialog.Builder(context)
+                                .setIcon(R.mipmap.ic_launcher_round)
+                                .setTitle(R.string.delete_account)
+                                .setMessage(R.string.delete_account_confirm)
+                                .setNegativeButton(android.R.string.no, null)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        boolean accountDeletedSuccessfully = DatabaseHelper.getInstance(context).deleteAccount(account);
+                                        if (accountDeletedSuccessfully) {
+                                            mValues.clear();
+                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts());
+                                            if (mValues.size() > 0 ) {
+                                                mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance()));
+                                            }
+                                            AccountRecyclerViewAdapter.this.notifyDataSetChanged();
+                                        }
+                                    }
+                                })
+                                .create();
+                        deleteAccount.show();
                         return true;
                     default:
                         return false;

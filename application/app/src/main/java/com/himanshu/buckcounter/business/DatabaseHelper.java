@@ -259,4 +259,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(KEY_ACCOUNTS_NAME, newName);
         return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
     }
+
+    public boolean deleteAccount(Account account) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        return sqLiteDatabase.delete(TABLE_ACCOUNTS, KEY_ACCOUNTS_NAME + " = ?", new String[]{String.valueOf(account.getName())}) > 0;
+    }
 }

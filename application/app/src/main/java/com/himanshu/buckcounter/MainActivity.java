@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
             Intent email = new Intent();
             email.setAction(Intent.ACTION_SEND);
-            email.putExtra(Intent.EXTRA_EMAIL, new String[]{"buck.counter.support@gmail.com"});
+            email.putExtra(Intent.EXTRA_EMAIL, new String[]{"buck.counter.care@gmail.com"});
             email.putExtra(Intent.EXTRA_SUBJECT, "Buck Counter");
             email.setType("message/rfc822");
             startActivity(Intent.createChooser(email, "Choose an Email client :"));

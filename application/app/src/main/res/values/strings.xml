@@ -3,7 +3,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Buck Counter</string>
-    <string name="nav_header_subtitle">buck.counter.support@gmail.com</string>
+    <string name="nav_header_subtitle">buck.counter.care@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -50,6 +50,8 @@
     <string name="edit_transaction_particulars">Edit Particulars</string>
     <string name="delete_transaction">Delete Transaction</string>
     <string name="delete_transaction_confirm">Are you sure you want to delete this transaction?</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_confirm">Are you sure you want to delete this account?\n&#9888; This will also delete all transactions associated with this account</string>
     <string name="no_transactions_found">No Transactions Found!</string>
     <string name="no_accounts_found">No Accounts Found!</string>
     <string name="add_transaction_date_hint">Enter transaction date</string>
