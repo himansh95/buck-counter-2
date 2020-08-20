@@ -33,7 +33,7 @@
             android:id="@+id/add_account_balance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:hint="@string/add_account_balance_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.checkbox.MaterialCheckBox
@@ -51,7 +51,7 @@
             android:id="@+id/add_credit_limit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:hint="@string/add_credit_limit_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

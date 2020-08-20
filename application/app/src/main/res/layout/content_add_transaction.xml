@@ -80,7 +80,7 @@
             android:id="@+id/add_transaction_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:hint="@string/add_transaction_amount_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>
