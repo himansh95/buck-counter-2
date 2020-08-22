@@ -1,7 +1,7 @@
 package com.himanshu.buckcounter;
 
 import android.Manifest;
-import android.app.ProgressDialog;
+import android.app.DownloadManager;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat;
 
 import android.os.Environment;
 import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.ProgressBar;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -34,14 +36,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
-import static com.himanshu.buckcounter.business.Constants.DATE_FORMAT;
-import static com.himanshu.buckcounter.business.Constants.DECIMAL_FORMAT;
 
 public class ExportXLSActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_STORAGE = 404;
@@ -108,12 +109,11 @@ public class ExportXLSActivity extends AppCompatActivity {
     }
 
     public class ExportToExcelTask extends AsyncTask<Void, Void, Boolean> {
-        private final ProgressDialog dialog = new ProgressDialog(ExportXLSActivity.this);
+        private final ProgressBar progressBar = findViewById(R.id.progress_bar);
 
         @Override
         protected void onPreExecute() {
-            this.dialog.setMessage(getText(R.string.export_progress_message));
-            this.dialog.show();
+            this.progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -121,7 +121,15 @@ public class ExportXLSActivity extends AppCompatActivity {
             Workbook workbook = new HSSFWorkbook();
             Cell cell = null;
 
-            //Cell style for header row
+            // Cell style for dates
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            dateCellStyle.setDataFormat(workbook.createDataFormat().getFormat("dd/MM/yyyy"));
+
+            // Cell style for currency
+            CellStyle currencyCellStyle = workbook.createCellStyle();
+            currencyCellStyle.setDataFormat(workbook.createDataFormat().getFormat("₹ ##,##,##,##,##0.00"));
+
+            // Cell style for header row
             CellStyle cellStyle = workbook.createCellStyle();
             cellStyle.setFillForegroundColor(HSSFColor.CORNFLOWER_BLUE.index);
             cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -179,6 +187,9 @@ public class ExportXLSActivity extends AppCompatActivity {
                 cell.setCellValue((String) entry.getKey());
                 cell.setCellStyle(cellStyle);
             }
+            cell = row.createCell(debitColumns.size() + creditColumns.size());
+            cell.setCellValue(getString(R.string.export_sheet_header_total));
+            cell.setCellStyle(cellStyle);
 
             List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions();
             Collections.reverse(transactions);
@@ -194,11 +205,13 @@ public class ExportXLSActivity extends AppCompatActivity {
                         row = sheet.createRow(currentDebitRow);
                     }
                     cell = row.createCell(debitColumns.get(headerDate));
-                    cell.setCellValue(DATE_FORMAT.format(transaction.getTimestamp()));
+                    cell.setCellValue(transaction.getTimestamp());
+                    cell.setCellStyle(dateCellStyle);
                     cell = row.createCell(debitColumns.get(headerParticulars));
                     cell.setCellValue(transaction.getParticulars());
                     cell = row.createCell(debitColumns.get(transaction.getDebitAccount().toUpperCase()));
-                    cell.setCellValue(DECIMAL_FORMAT.format(transaction.getAmount()));
+                    cell.setCellValue(transaction.getAmount());
+                    cell.setCellStyle(currencyCellStyle);
 
                     ++currentDebitRow;
                 }
@@ -209,11 +222,13 @@ public class ExportXLSActivity extends AppCompatActivity {
                         row = sheet.createRow(currentCreditRow);
                     }
                     cell = row.createCell(creditColumns.get(headerDate));
-                    cell.setCellValue(DATE_FORMAT.format(transaction.getTimestamp()));
+                    cell.setCellValue(transaction.getTimestamp());
+                    cell.setCellStyle(dateCellStyle);
                     cell = row.createCell(creditColumns.get(headerParticulars));
                     cell.setCellValue(transaction.getParticulars());
                     cell = row.createCell(creditColumns.get(transaction.getCreditAccount().toUpperCase()));
-                    cell.setCellValue(DECIMAL_FORMAT.format(transaction.getAmount()));
+                    cell.setCellValue(transaction.getAmount());
+                    cell.setCellStyle(currencyCellStyle);
 
                     ++currentCreditRow;
                 }
@@ -221,6 +236,7 @@ public class ExportXLSActivity extends AppCompatActivity {
             cellStyle = workbook.createCellStyle();
             cellStyle.setFillForegroundColor(HSSFColor.CORAL.index);
             cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle.setDataFormat(workbook.createDataFormat().getFormat("₹ ##,##,##,##,##0.00"));
 
             currentRowIndex = currentDebitRow >= currentCreditRow ? currentDebitRow : currentCreditRow;
 
@@ -235,9 +251,12 @@ public class ExportXLSActivity extends AppCompatActivity {
 
             for(Account account: accounts) {
                 cell = row.createCell(creditColumns.get(account.getName().toUpperCase()));
-                cell.setCellValue(DECIMAL_FORMAT.format(account.getBalance()));
+                cell.setCellValue(account.getBalance());
                 cell.setCellStyle(cellStyle);
             }
+            cell = row.createCell(debitColumns.size() + creditColumns.size());
+            cell.setCellValue(DatabaseHelper.getInstance(ExportXLSActivity.this).getTotalAccountBalance());
+            cell.setCellStyle(cellStyle);
 
             row = sheet.createRow(currentRowIndex++);
 
@@ -247,7 +266,8 @@ public class ExportXLSActivity extends AppCompatActivity {
             for(Account account: accounts) {
                 if (account.isCreditCard()) {
                     cell = row.createCell(creditColumns.get(account.getName().toUpperCase()));
-                    cell.setCellValue(DECIMAL_FORMAT.format(account.getCreditLimit()));
+                    cell.setCellValue(account.getCreditLimit());
+                    cell.setCellStyle(currencyCellStyle);
                 }
             }
 
@@ -259,16 +279,20 @@ public class ExportXLSActivity extends AppCompatActivity {
             for(Account account: accounts) {
                 if (account.isCreditCard()) {
                     cell = row.createCell(creditColumns.get(account.getName().toUpperCase()));
-                    cell.setCellValue(DECIMAL_FORMAT.format(account.getCreditLimit() + account.getBalance()));
+                    cell.setCellValue(account.getCreditLimit() + account.getBalance());
+                    cell.setCellStyle(currencyCellStyle);
                 }
             }
-
-            File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), getString(R.string.export_directory_name));
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                return false;
+            }
+            File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File directory = new File(root, getString(R.string.export_directory_name));
 
             if (! directory.exists()) {
                 directory.mkdir();
             }
-            String fileName = String.format(getString(R.string.export_file_name), new Date().getTime());
+            String fileName = String.format(getString(R.string.export_file_name), new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(new Date()));
             File file = new File(directory, fileName);
 
             try {
@@ -276,17 +300,22 @@ public class ExportXLSActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            /*
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
+            */
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 workbook.write(fileOutputStream);
                 fileOutputStream.close();
+
+                // Using downloads manager to download from local file
+                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                downloadManager.addCompletedDownload(fileName, fileName, true, MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileName.substring(fileName.lastIndexOf('.') + 1)), file.getAbsolutePath(), file.length(), true);
+
                 return true;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -298,10 +327,7 @@ public class ExportXLSActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            if (this.dialog.isShowing()) {
-
-                this.dialog.dismiss();
-            }
+            this.progressBar.setVisibility(View.GONE);
             Snackbar.make(findViewById(R.id.main_layout),
                     aBoolean ? R.string.export_success_message : R.string.export_failure_message,
                     Snackbar.LENGTH_SHORT)

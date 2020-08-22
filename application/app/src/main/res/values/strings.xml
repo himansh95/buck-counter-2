@@ -59,10 +59,11 @@
     <string name="title_activity_export_xls">Export To Excel</string>
     <!-- Export Strings -->
     <string name="export_directory_name">BuckCounter</string>
-    <string name="export_file_name">Accounts_%d.xls</string>
+    <string name="export_file_name">Accounts_%s.xlsx</string>
     <string name="export_sheet_name">Transactions</string>
     <string name="export_sheet_header_debit">Debit</string>
     <string name="export_sheet_header_credit">Credit</string>
+    <string name="export_sheet_header_total">Total</string>
     <string name="export_sheet_header_date">Date</string>
     <string name="export_sheet_header_particulars">Particulars</string>
     <string name="export_sheet_header_balance">Balance</string>
