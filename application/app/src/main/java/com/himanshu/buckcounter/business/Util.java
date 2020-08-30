@@ -9,6 +9,8 @@ import android.text.Spanned;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+
 public class Util {
     @SuppressWarnings("deprecation")
     public static Spanned fromHtml(String html){
@@ -25,5 +27,16 @@ public class Util {
     }
     public static void hideSoftKeyboard(Activity activity, View view) {
         ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || string.isEmpty();
+    }
+    public static boolean isNotNullOrEmpty(String string) {
+        return !isNullOrEmpty(string);
+    }
+    public static GoogleSignInOptions getGoogleSignInOptions() {
+        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
     }
 }

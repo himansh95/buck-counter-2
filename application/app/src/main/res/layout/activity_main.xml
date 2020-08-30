@@ -21,6 +21,24 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer" >
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_margin="10dp"
+            android:layout_gravity="bottom" />
+        <com.shobhitpuri.custombuttons.GoogleSignInButton
+            android:id="@+id/google_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/sign_out_button_label"
+            android:textStyle="bold"
+            android:textColor="@color/gray"
+            android:layout_margin="10dp"
+            android:layout_gravity="bottom" />
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

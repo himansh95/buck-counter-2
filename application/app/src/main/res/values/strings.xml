@@ -74,4 +74,8 @@
     <string name="add_credit_limit_error">Please enter a valid credit limit</string>
     <string name="credit_limit_label">Credit Limit</string>
     <string name="remaining_credit_limit_label">Remaining Credit Limit</string>
+
+    <string name="title_activity_sign_in">SignInActivity</string>
+    <string name="no_sign_in"><u>Or continue without signing in</u></string>
+    <string name="sign_out_button_label">Sign out</string>
 </resources>
