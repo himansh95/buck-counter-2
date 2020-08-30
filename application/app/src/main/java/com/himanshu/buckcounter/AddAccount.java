@@ -7,6 +7,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.himanshu.buckcounter.beans.Account;
+import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+
+import java.util.Date;
 
 import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
 import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
@@ -85,14 +88,24 @@ public class AddAccount extends AppCompatActivity {
             return;
         }
         boolean accountAddedSuccessfully;
-        if (initWithZero.isChecked() && isCreditCard.isChecked()) {
+
+        if (isCreditCard.isChecked()) {
             accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), true, Double.valueOf(creditLimit.getText().toString().trim())));
-        } else if (isCreditCard.isChecked()) {
-            accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), Double.valueOf(accountBalance.getText().toString().trim()), true, Double.valueOf(creditLimit.getText().toString().trim())));
-        } else if (initWithZero.isChecked()) {
-            accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase()));
         } else {
-            accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase(), Double.valueOf(accountBalance.getText().toString().trim())));
+            accountAddedSuccessfully = DatabaseHelper.getInstance(this).insertAccount(new Account(accountName.getText().toString().trim().toLowerCase()));
+        }
+
+        if (!initWithZero.isChecked()) {
+            double initialBalance = Double.valueOf(accountBalance.getText().toString().trim());
+            Transaction.TransactionType transactionType = initialBalance > 0 ? Transaction.TransactionType.DR : Transaction.TransactionType.CR;
+            accountAddedSuccessfully = accountAddedSuccessfully &&
+                    DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
+                            transactionType,
+                            getString(R.string.initial_transaction_particulars),
+                            initialBalance > 0 ? initialBalance : -1 * initialBalance,
+                            new Date(),
+                            accountName.getText().toString().trim().toLowerCase()
+                    ));
         }
         CharSequence responseText = getText(R.string.add_account_success);
         if (!accountAddedSuccessfully) {

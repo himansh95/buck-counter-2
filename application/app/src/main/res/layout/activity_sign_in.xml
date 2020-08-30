@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#009999"
+    android:background="@drawable/splash"
     tools:context=".SignInActivity">
 
     <LinearLayout
@@ -25,6 +25,7 @@
             android:layout_gravity="bottom"
             android:textAlignment="center"
             android:onClick="noSignIn"
+            android:textColor="@color/white"
             android:text="@string/no_sign_in"/>
     </LinearLayout>
 
