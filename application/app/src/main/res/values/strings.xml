@@ -78,4 +78,34 @@
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="no_sign_in"><u>Or continue without signing in</u></string>
     <string name="sign_out_button_label">Sign out</string>
+    <array name="particulars_array">
+        <item>initial balance</item>
+        <item>atm withdrawal</item>
+        <item>food delivery</item>
+        <item>food</item>
+        <item>breakfast</item>
+        <item>lunch</item>
+        <item>dinner</item>
+        <item>credit card bill</item>
+        <item>credit card payment</item>
+        <item>online wallet money load</item>
+        <item>online order</item>
+        <item>cash back</item>
+        <item>groceries</item>
+        <item>internet connection</item>
+        <item>mobile recharge</item>
+        <item>interest</item>
+        <item>mutual funds</item>
+        <item>investments</item>
+        <item>stocks</item>
+        <item>loan repayment</item>
+        <item>emi</item>
+        <item>loan emi</item>
+        <item>fuel</item>
+        <item>movies</item>
+        <item>restaurant</item>
+        <item>travel</item>
+        <item>hotel</item>
+        <item>vacation</item>
+    </array>
 </resources>

@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.himanshu.buckcounter.business.Constants.*;
@@ -269,5 +270,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean deleteAccount(Account account) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         return sqLiteDatabase.delete(TABLE_ACCOUNTS, KEY_ACCOUNTS_NAME + " = ?", new String[]{String.valueOf(account.getName())}) > 0;
+    }
+
+    public String[] getAllAccountNames() {
+        ArrayList<String> accountNames = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_NAME + " from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_NAME, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                accountNames.add(cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME)).toUpperCase());
+            }
+            cursor.close();
+        }
+        String[] array = new String[accountNames.size()];
+        return accountNames.toArray(array);
+    }
+
+    public HashSet<String> getAllTransactionParticulars() {
+        HashSet<String> particulars = new HashSet<>();
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select distinct " + KEY_TRANSACTIONS_PARTICULARS + " from " + TABLE_TRANSACTIONS, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                particulars.add(cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_PARTICULARS)));
+            }
+            cursor.close();
+        }
+        return particulars;
     }
 }

@@ -26,9 +26,11 @@ import android.widget.DatePicker;
 import android.widget.RadioGroup;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.himanshu.buckcounter.business.Constants.DATE_FORMAT;
@@ -69,6 +71,16 @@ public class AddTransaction extends AppCompatActivity {
         });
     }
 
+    public void setUpParticularsTextView() {
+        AutoCompleteTextView particulars = findViewById(R.id.add_transaction_particulars);
+        particulars.setThreshold(1);
+        HashSet<String> particularsSet = DatabaseHelper.getInstance(this).getAllTransactionParticulars();
+        String[] staticList = getResources().getStringArray(R.array.particulars_array);
+        particularsSet.addAll(Arrays.asList(staticList));
+        String[] particularsList = new String[particularsSet.size()];
+        particulars.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, particularsSet.toArray(particularsList)));
+    }
+
     public void doSetup() {
         RadioGroup selectTransactionType = findViewById(R.id.add_transaction_type);
         selectTransactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -86,12 +98,8 @@ public class AddTransaction extends AppCompatActivity {
                 }
             }
         });
-        List<Account> accounts = DatabaseHelper.getInstance(this).getAllAccounts();
-        String[] accountNames = new String[accounts.size()];
-        int i = 0;
-        for(Account account : accounts) {
-            accountNames[i++] = account.getName().toUpperCase();
-        }
+        String[] accountNames = DatabaseHelper.getInstance(this).getAllAccountNames();
+
         setUpAutoCompleteTextView((AutoCompleteTextView)findViewById(R.id.select_credit_account), accountNames);
         setUpAutoCompleteTextView((AutoCompleteTextView)findViewById(R.id.select_debit_account), accountNames);
         TextInputEditText addTransactionDate = findViewById(R.id.add_transaction_date);
@@ -106,6 +114,7 @@ public class AddTransaction extends AppCompatActivity {
                 newFragment.show(getSupportFragmentManager(), "datePicker");
             }
         });
+        setUpParticularsTextView();
     }
 
     public void addTransactionClicked(View view) {
@@ -113,7 +122,7 @@ public class AddTransaction extends AppCompatActivity {
         AutoCompleteTextView selectCreditAccount = findViewById(R.id.select_credit_account);
         AutoCompleteTextView selectDebitAccount = findViewById(R.id.select_debit_account);
         TextInputEditText transactionDate = findViewById(R.id.add_transaction_date);
-        TextInputEditText transactionParticulars = findViewById(R.id.add_transaction_particulars);
+        AutoCompleteTextView transactionParticulars = findViewById(R.id.add_transaction_particulars);
         TextInputEditText transactionAmount = findViewById(R.id.add_transaction_amount);
         boolean validationFailed = false;
 
