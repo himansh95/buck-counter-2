@@ -29,7 +29,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="9"
                 android:background="@color/home_color_1"
-                android:src="@drawable/account_bank" />
+                android:src="@drawable/black_account" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -64,7 +64,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="9"
                 android:background="@color/home_color_2"
-                android:src="@drawable/database" />
+                android:src="@drawable/black_transaction" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -99,7 +99,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="9"
                 android:background="@color/home_color_3"
-                android:src="@drawable/bank_plus" />
+                android:src="@drawable/white_account_plus" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -134,7 +134,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="9"
                 android:background="@color/home_color_4"
-                android:src="@drawable/database_plus" />
+                android:src="@drawable/white_transaction_plus" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

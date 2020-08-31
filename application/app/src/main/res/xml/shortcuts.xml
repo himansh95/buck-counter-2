@@ -1,0 +1,46 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="Add Transaction"
+        android:enabled="true"
+        android:icon="@drawable/white_transaction_plus"
+        android:shortcutShortLabel="@string/shortcut_label_add_transaction"
+        android:shortcutLongLabel="@string/shortcut_label_add_transaction">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.himanshu.buckcounter"
+            android:targetClass="com.himanshu.buckcounter.AddTransaction" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="Add Account"
+        android:enabled="true"
+        android:icon="@drawable/white_account_plus"
+        android:shortcutShortLabel="@string/shortcut_label_add_account"
+        android:shortcutLongLabel="@string/shortcut_label_add_account">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.himanshu.buckcounter"
+            android:targetClass="com.himanshu.buckcounter.AddAccount" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="View Transactions"
+        android:enabled="true"
+        android:icon="@drawable/white_transaction"
+        android:shortcutShortLabel="@string/shortcut_label_view_transactions"
+        android:shortcutLongLabel="@string/shortcut_label_view_transactions">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.himanshu.buckcounter"
+            android:targetClass="com.himanshu.buckcounter.TransactionsActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="View Accounts"
+        android:enabled="true"
+        android:icon="@drawable/white_account"
+        android:shortcutShortLabel="@string/shortcut_label_view_accounts"
+        android:shortcutLongLabel="@string/shortcut_label_view_accounts">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.himanshu.buckcounter"
+            android:targetClass="com.himanshu.buckcounter.AccountsActivity" />
+    </shortcut>
+</shortcuts>

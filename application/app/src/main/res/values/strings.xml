@@ -108,4 +108,9 @@
         <item>hotel</item>
         <item>vacation</item>
     </array>
+    <!-- Shortcuts -->
+    <string name="shortcut_label_view_accounts">View Accounts</string>
+    <string name="shortcut_label_view_transactions">View Transactions</string>
+    <string name="shortcut_label_add_account">Add Account</string>
+    <string name="shortcut_label_add_transaction">Add Transaction</string>
 </resources>

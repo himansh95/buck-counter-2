@@ -10,15 +10,15 @@
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_accounts"
-            android:icon="@drawable/account_bank"
+            android:icon="@drawable/black_account"
             android:title="@string/title_activity_accounts" />
         <item
             android:id="@+id/nav_transactions"
-            android:icon="@drawable/database"
+            android:icon="@drawable/black_transaction"
             android:title="@string/title_activity_transactions" />
         <item
             android:id="@+id/nav_export"
-            android:icon="@drawable/database_export"
+            android:icon="@drawable/black_transaction_export"
             android:title="@string/menu_export" />
     </group>
 
