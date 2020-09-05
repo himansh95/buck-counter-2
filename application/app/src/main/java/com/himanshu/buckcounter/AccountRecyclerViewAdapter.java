@@ -3,6 +3,8 @@ package com.himanshu.buckcounter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteConstraintException;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -95,17 +97,22 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                     @Override
                                     public void onClick(View view) {
                                         if (accountName.getText() == null || accountName.getText().toString().isEmpty() || !accountName.getText().toString().trim().toLowerCase().matches(VALID_TEXT_REGEX)) {
-                                            ((TextInputLayout)editName.findViewById(R.id.edit_account_name_container)).setError(context.getText(R.string.add_account_name_error));
+                                            ((TextInputLayout) editName.findViewById(R.id.edit_account_name_container)).setError(context.getText(R.string.add_account_name_error));
                                             return;
                                         } else {
-                                            ((TextInputLayout)editName.findViewById(R.id.edit_account_name_container)).setErrorEnabled(false);
+                                            ((TextInputLayout) editName.findViewById(R.id.edit_account_name_container)).setErrorEnabled(false);
                                         }
                                         String newName = accountName.getText().toString().trim().toLowerCase();
                                         if (newName.equals(account.getName())) {
                                             editName.dismiss();
                                             return;
                                         }
-                                        boolean editNameSuccessful = DatabaseHelper.getInstance(context).editAccountName(account, newName);
+                                        boolean editNameSuccessful = false;
+                                        try {
+                                            editNameSuccessful = DatabaseHelper.getInstance(context).editAccountName(account, newName);
+                                        } catch (SQLiteConstraintException e) {
+                                            Toast.makeText(context, "Account name must be unique", Toast.LENGTH_LONG).show();
+                                        }
                                         if (editNameSuccessful) {
                                             mValues.get(position).setName(newName);
                                             AccountRecyclerViewAdapter.this.notifyItemChanged(position);

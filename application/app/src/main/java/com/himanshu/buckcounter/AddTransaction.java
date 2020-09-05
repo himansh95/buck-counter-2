@@ -9,7 +9,6 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 import com.himanshu.buckcounter.business.Util;
@@ -31,7 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.List;
 
 import static com.himanshu.buckcounter.business.Constants.DATE_FORMAT;
 import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
@@ -118,6 +116,8 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     public void addTransactionClicked(View view) {
+        view.setEnabled(false);
+        view.setAlpha(0.5f);
         int selectedTransactionType = ((RadioGroup)findViewById(R.id.add_transaction_type)).getCheckedRadioButtonId();
         AutoCompleteTextView selectCreditAccount = findViewById(R.id.select_credit_account);
         AutoCompleteTextView selectDebitAccount = findViewById(R.id.select_debit_account);

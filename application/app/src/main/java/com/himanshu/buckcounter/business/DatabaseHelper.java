@@ -170,7 +170,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Account> getAllAccounts() {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Account> accounts = new ArrayList<>();
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_NAME, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_IS_CREDIT_CARD + ", " + KEY_ACCOUNTS_NAME, null);
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 accounts.add(new Account(

@@ -1,10 +1,12 @@
 package com.himanshu.buckcounter;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.himanshu.buckcounter.business.Util;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -230,12 +233,17 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-            Intent email = new Intent();
-            email.setAction(Intent.ACTION_SEND);
-            email.putExtra(Intent.EXTRA_EMAIL, new String[]{"buck.counter.care@gmail.com"});
-            email.putExtra(Intent.EXTRA_SUBJECT, "Buck Counter");
-            email.setType("message/rfc822");
-            startActivity(Intent.createChooser(email, "Choose an Email client :"));
+            String emailData = "mailto:buck.counter.care@gmail.com" +
+                    "?cc=" + "buck.counter.care@gmail.com" +
+                    "&subject=" + Uri.encode("Buck Counter Feedback");
+            Intent email = new Intent(Intent.ACTION_SENDTO);
+            email.setData(Uri.parse(emailData));
+
+            try {
+                startActivity(email);
+            } catch (ActivityNotFoundException e) {
+                Snackbar.make(mNavigationView, "No Email client found", Snackbar.LENGTH_SHORT).show();
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

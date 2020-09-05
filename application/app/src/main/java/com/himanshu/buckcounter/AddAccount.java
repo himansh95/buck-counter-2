@@ -17,8 +17,10 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import java.text.ParseException;
 import java.util.Date;
 
+import static com.himanshu.buckcounter.business.Constants.DATE_FORMAT;
 import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
 import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 
@@ -59,6 +61,8 @@ public class AddAccount extends AppCompatActivity {
     }
 
     public void addActivityClicked(View view) {
+        view.setEnabled(false);
+        view.setAlpha(0.5f);
         TextInputEditText accountName = findViewById(R.id.add_account_name);
         TextInputEditText accountBalance = findViewById(R.id.add_account_balance);
         CheckBox initWithZero = findViewById(R.id.init_with_zero);
@@ -98,14 +102,18 @@ public class AddAccount extends AppCompatActivity {
         if (!initWithZero.isChecked()) {
             double initialBalance = Double.valueOf(accountBalance.getText().toString().trim());
             Transaction.TransactionType transactionType = initialBalance > 0 ? Transaction.TransactionType.DR : Transaction.TransactionType.CR;
-            accountAddedSuccessfully = accountAddedSuccessfully &&
-                    DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
-                            transactionType,
-                            getString(R.string.initial_transaction_particulars),
-                            initialBalance > 0 ? initialBalance : -1 * initialBalance,
-                            new Date(),
-                            accountName.getText().toString().trim().toLowerCase()
-                    ));
+            try {
+                accountAddedSuccessfully = accountAddedSuccessfully &&
+                        DatabaseHelper.getInstance(this).insertTransaction(new Transaction(
+                                transactionType,
+                                getString(R.string.initial_transaction_particulars),
+                                initialBalance > 0 ? initialBalance : -1 * initialBalance,
+                                DATE_FORMAT.parse(DATE_FORMAT.format(new Date())),
+                                accountName.getText().toString().trim().toLowerCase()
+                        ));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         CharSequence responseText = getText(R.string.add_account_success);
         if (!accountAddedSuccessfully) {

@@ -83,7 +83,7 @@ public class SignInActivity extends AppCompatActivity {
     private void updateUI(GoogleSignInAccount account) {
         Intent intent = new Intent(this, MainActivity.class);
         if (account != null) {
-            Toast.makeText(this, "email: " + account.getEmail(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Welcome back: " + account.getEmail(), Toast.LENGTH_LONG).show();
         }
         Log.i(TAG, "here");
         startActivity(intent);
