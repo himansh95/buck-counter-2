@@ -165,6 +165,8 @@ public class AddTransaction extends AppCompatActivity {
             ((TextInputLayout)findViewById(R.id.add_transaction_amount_container)).setErrorEnabled(false);
         }
         if (validationFailed) {
+            view.setEnabled(true);
+            view.setAlpha(1f);
             return;
         }
         boolean transactionAddedSuccessfully = false;

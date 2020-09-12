@@ -89,6 +89,8 @@ public class AddAccount extends AppCompatActivity {
             ((TextInputLayout) findViewById(R.id.add_credit_limit_container)).setErrorEnabled(false);
         }
         if (validationFailed) {
+            view.setEnabled(true);
+            view.setAlpha(1f);
             return;
         }
         boolean accountAddedSuccessfully;

@@ -2,11 +2,13 @@ package com.himanshu.buckcounter;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.beans.Transaction;
@@ -110,10 +112,13 @@ public class ExportXLSActivity extends AppCompatActivity {
 
     public class ExportToExcelTask extends AsyncTask<Void, Void, Boolean> {
         private final ProgressBar progressBar = findViewById(R.id.progress_bar);
+        private final FloatingActionButton fab = findViewById(R.id.fab);
 
         @Override
         protected void onPreExecute() {
             this.progressBar.setVisibility(View.VISIBLE);
+            fab.setEnabled(false);
+            fab.setAlpha(0.5f);
         }
 
         @Override
@@ -286,7 +291,7 @@ public class ExportXLSActivity extends AppCompatActivity {
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 return false;
             }
-            File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File root = ExportXLSActivity.this.getExternalFilesDir(null);
             File directory = new File(root, getString(R.string.export_directory_name));
 
             if (! directory.exists()) {
@@ -328,10 +333,18 @@ public class ExportXLSActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             this.progressBar.setVisibility(View.GONE);
-            Snackbar.make(findViewById(R.id.main_layout),
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_layout),
                     aBoolean ? R.string.export_success_message : R.string.export_failure_message,
-                    Snackbar.LENGTH_SHORT)
-                    .show();
+                    Snackbar.LENGTH_SHORT);
+            snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    fab.setEnabled(true);
+                    fab.setAlpha(1f);
+                }
+            });
+            snackbar.show();
         }
     }
 }
