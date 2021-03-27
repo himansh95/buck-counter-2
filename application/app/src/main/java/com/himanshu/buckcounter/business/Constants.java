@@ -2,6 +2,7 @@ package com.himanshu.buckcounter.business;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class Constants {
     // database constants
@@ -27,7 +28,7 @@ public class Constants {
     static final String TRIGGER_TRANSACTIONS_UPDATE_AMOUNT = "TRIGGER_TRANSACTIONS_UPDATE_AMOUNT";
 
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("₹ ##,##,##,##,###.##");
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-    public static final String VALID_TEXT_REGEX = "^[\\w\\s\\d]+$";
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+    public static final String VALID_TEXT_REGEX = "[\\w\\s\\d\\~\\`\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\_\\/\\-\\+\\=\\{\\}\\[\\]\\|\\\\\\:\\;\\'\\\"\\<\\>\\,\\.\\?]+";
     public static final String VALID_AMOUNT_REGEX = "^-?[0-9]+(\\.[0-9]+)?$";
 }

@@ -208,15 +208,61 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return transactions;
     }
 
-    public double getTotalAccountBalance(){
+    public double getTotalAccountBalance(boolean isCreditCard){
         double total = 0.0;
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS, null);
+        Cursor cursor;
+        if (isCreditCard) {
+            cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_CREDIT_CARD + " = ?", new String[]{Integer.toString(1)});
+        } else {
+            cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS, null);
+        }
         if(cursor.moveToFirst()){
             total = cursor.getDouble(0);
         }
         cursor.close();
         return total;
+    }
+
+    public double getTotalCreditLimit() {
+        double total = 0.0;
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_CREDIT_LIMIT + ") from " + TABLE_ACCOUNTS, null);
+        if(cursor.moveToFirst()){
+            total = cursor.getDouble(0);
+        }
+        cursor.close();
+        return total;
+    }
+
+    public int getAccountsCount(boolean isCreditCard) {
+        int count = 0;
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor;
+        if (isCreditCard){
+            cursor = sqLiteDatabase.rawQuery("select count(" + KEY_ACCOUNTS_NAME + ") from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_CREDIT_CARD + " = ?", new String[]{Integer.toString(1)});
+        } else {
+            cursor = sqLiteDatabase.rawQuery("select count(" + KEY_ACCOUNTS_NAME + ") from " + TABLE_ACCOUNTS, null);
+        }
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        return count;
+    }
+
+    public int getTransactionsCount(int numberOfDays) {
+        int count = 0;
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor;
+        if (numberOfDays == -1){
+            cursor = sqLiteDatabase.rawQuery("select count(" + KEY_TRANSACTIONS_ID + ") from " + TABLE_TRANSACTIONS, null);
+        } else {
+            cursor = sqLiteDatabase.rawQuery("select count(" + KEY_TRANSACTIONS_ID + ") from " + TABLE_TRANSACTIONS + " where julianday('now') - julianday(" + KEY_TRANSACTIONS_TIMESTAMP + ") <= " + numberOfDays , null);
+        }
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        return count;
     }
 
     public boolean insertAccount(Account account) {

@@ -31,6 +31,7 @@
     <string name="add_account_failure">Account could not be added</string>
     <!-- Add Transaction -->
     <string name="title_activity_add_transaction">Add Transaction</string>
+    <string name="transaction_type_hint">Select transaction type</string>
     <string name="transaction_type_dr">Debit (Earning)</string>
     <string name="transaction_type_cr">Credit (Spending)</string>
     <string name="transaction_type_contra">Contra (Dual)</string>
@@ -59,7 +60,7 @@
     <string name="title_activity_export_xls">Export To Excel</string>
     <!-- Export Strings -->
     <string name="export_directory_name">BuckCounter</string>
-    <string name="export_file_name">Accounts_%s.xlsx</string>
+    <string name="export_file_name">Accounts_%s.xls</string>
     <string name="export_sheet_name">Transactions</string>
     <string name="export_sheet_header_debit">Debit</string>
     <string name="export_sheet_header_credit">Credit</string>
@@ -113,4 +114,23 @@
     <string name="shortcut_label_view_transactions">View Transactions</string>
     <string name="shortcut_label_add_account">Add Account</string>
     <string name="shortcut_label_add_transaction">Add Transaction</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="overview">overview</string>
+    <string name="overview1">Total Account Balance\n%s</string>
+    <string name="overview2">Total Credit Limit\n%s\n\nRemaining Credit Limit\n%s</string>
 </resources>

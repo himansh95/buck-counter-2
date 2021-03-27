@@ -260,7 +260,7 @@ public class ExportXLSActivity extends AppCompatActivity {
                 cell.setCellStyle(cellStyle);
             }
             cell = row.createCell(debitColumns.size() + creditColumns.size());
-            cell.setCellValue(DatabaseHelper.getInstance(ExportXLSActivity.this).getTotalAccountBalance());
+            cell.setCellValue(DatabaseHelper.getInstance(ExportXLSActivity.this).getTotalAccountBalance(false));
             cell.setCellStyle(cellStyle);
 
             row = sheet.createRow(currentRowIndex++);

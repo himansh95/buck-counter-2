@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
-
     <androidx.cardview.widget.CardView
         android:id="@+id/transaction_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,10 +23,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_margin="5dp"
+                android:adjustViewBounds="true"
+
+                android:maxHeight="40dp"
+                android:scaleType="fitCenter"
                 android:src="@mipmap/transaction_contra" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -36,13 +40,23 @@
                 android:layout_alignParentEnd="true"/>
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/transaction_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:layout_alignParentTop="true"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/transaction_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textAllCaps="true"
-                android:padding="10dp"
-                android:layout_below="@id/transaction_context_menu" />
+                android:padding="5dp"
+                android:layout_below="@id/transaction_amount" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/transaction_particulars"
@@ -54,24 +68,13 @@
                 android:layout_below="@id/transaction_account" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/transaction_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textStyle="bold"
-                android:fontFamily="serif-monospace"
-                android:textSize="30sp"
-                android:textAlignment="center"
-                android:layout_below="@id/transaction_particulars"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/transaction_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:fontFamily="serif-monospace"
-                android:padding="10dp"
-                android:layout_below="@id/transaction_amount"
+                android:padding="5dp"
+                android:paddingBottom="10dp"
+                android:layout_below="@id/transaction_particulars"
                 android:layout_alignParentBottom="true"/>
 
         </RelativeLayout>

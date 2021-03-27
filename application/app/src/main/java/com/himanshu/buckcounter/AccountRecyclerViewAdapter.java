@@ -138,7 +138,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                             mValues.clear();
                                             mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts());
                                             if (mValues.size() > 0 ) {
-                                                mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance()));
+                                                mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance(false)));
                                             }
                                             AccountRecyclerViewAdapter.this.notifyDataSetChanged();
                                         }

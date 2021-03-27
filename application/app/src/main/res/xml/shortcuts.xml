@@ -2,7 +2,7 @@
     <shortcut
         android:shortcutId="Add Transaction"
         android:enabled="true"
-        android:icon="@drawable/white_transaction_plus"
+        android:icon="@drawable/ic_shortcut_add_transaction"
         android:shortcutShortLabel="@string/shortcut_label_add_transaction"
         android:shortcutLongLabel="@string/shortcut_label_add_transaction">
         <intent
@@ -13,7 +13,7 @@
     <shortcut
         android:shortcutId="Add Account"
         android:enabled="true"
-        android:icon="@drawable/white_account_plus"
+        android:icon="@drawable/ic_shortcut_add_account"
         android:shortcutShortLabel="@string/shortcut_label_add_account"
         android:shortcutLongLabel="@string/shortcut_label_add_account">
         <intent
@@ -24,7 +24,7 @@
     <shortcut
         android:shortcutId="View Transactions"
         android:enabled="true"
-        android:icon="@drawable/white_transaction"
+        android:icon="@drawable/ic_shortcut_view_transactions"
         android:shortcutShortLabel="@string/shortcut_label_view_transactions"
         android:shortcutLongLabel="@string/shortcut_label_view_transactions">
         <intent
@@ -35,7 +35,7 @@
     <shortcut
         android:shortcutId="View Accounts"
         android:enabled="true"
-        android:icon="@drawable/white_account"
+        android:icon="@drawable/ic_shortcut_view_accounts"
         android:shortcutShortLabel="@string/shortcut_label_view_accounts"
         android:shortcutLongLabel="@string/shortcut_label_view_accounts">
         <intent

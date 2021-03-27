@@ -5,147 +5,156 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main"
     tools:context=".MainActivity">
-
     <androidx.cardview.widget.CardView
-        android:id="@+id/accounts"
+        android:id="@+id/overview_card"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:onClick="homeCardClicked"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/transactions"
-        app:layout_constraintBottom_toTopOf="@id/add_account">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="9"
-                android:background="@color/home_color_1"
-                android:src="@drawable/black_account" />
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:background="@color/home_color_1"
-                android:text="@string/title_activity_accounts"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-    <androidx.cardview.widget.CardView
-        android:id="@+id/transactions"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="homeCardClicked"
-        app:layout_constraintLeft_toRightOf="@id/accounts"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/add_transaction">
-        <LinearLayout
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/accounts_card"
+        app:cardCornerRadius="10dp">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="9"
-                android:background="@color/home_color_2"
-                android:src="@drawable/black_transaction" />
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="@color/home_color_2">
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/overview_card_title"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"
+                android:text="@string/overview"
                 android:textAllCaps="true"
-                android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="@color/home_color_2"
-                android:text="@string/title_activity_transactions"/>
-        </LinearLayout>
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textAlignment="center"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/summary_less"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingBottom="10dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/chevron_up"
+                android:onClick="homeClickHandler"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/summary_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingBottom="10dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/chevron_down"
+                android:visibility="gone"
+                android:onClick="homeClickHandler"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/overview1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/overview_card_title"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/white"
+                android:textAlignment="center"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/overview2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/overview1"
+                android:textColor="@color/white"
+                android:textAlignment="center"/>
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
-        android:id="@+id/add_account"
+        android:id="@+id/accounts_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:onClick="homeCardClicked"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/accounts"
-        app:layout_constraintRight_toLeftOf="@id/add_transaction"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/overview_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/transactions_card"
+        app:cardCornerRadius="10dp"
+        android:onClick="homeClickHandler">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:padding="10dp"
+            android:orientation="horizontal"
+            android:background="@color/home_color_3">
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="9"
-                android:background="@color/home_color_3"
-                android:src="@drawable/white_account_plus" />
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textAlignment="center"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:src="@drawable/white_account"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:gravity="center"
+                android:text="@string/title_activity_accounts"
                 android:textAllCaps="true"
-                android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="@color/home_color_3"
-                android:text="@string/title_activity_add_account"/>
+                android:textStyle="bold"
+                android:textSize="20sp"/>
         </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"
+            android:onClick="homeClickHandler"
+            android:src="@drawable/white_plus"/>
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
-        android:id="@+id/add_transaction"
+        android:id="@+id/transactions_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="homeCardClicked"
-        app:layout_constraintLeft_toRightOf="@id/accounts"
-        app:layout_constraintTop_toBottomOf="@id/accounts"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/accounts_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="10dp"
+        android:onClick="homeClickHandler">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:padding="10dp"
+            android:orientation="horizontal"
+            android:background="@color/home_color_4">
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="9"
-                android:background="@color/home_color_4"
-                android:src="@drawable/white_transaction_plus" />
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textAlignment="center"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:src="@drawable/white_transaction"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:gravity="center"
+                android:text="@string/title_activity_transactions"
                 android:textAllCaps="true"
-                android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="@color/home_color_4"
-                android:text="@string/title_activity_add_transaction"/>
+                android:textStyle="bold"
+                android:textSize="20sp"/>
         </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_transaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"
+            android:onClick="homeClickHandler"
+            android:src="@drawable/white_plus"/>
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

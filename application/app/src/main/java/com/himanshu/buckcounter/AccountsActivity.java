@@ -42,7 +42,7 @@ public class AccountsActivity extends AppCompatActivity {
         accountList = new ArrayList<>();
         accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
         if (accountList.size() > 0) {
-            accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
+            accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance(false)));
         }
         mAccountRecyclerViewAdapter = new AccountRecyclerViewAdapter(accountList, this);
         recyclerView.setAdapter(mAccountRecyclerViewAdapter);
@@ -54,7 +54,7 @@ public class AccountsActivity extends AppCompatActivity {
         accountList.clear();
         accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
         if (accountList.size() > 0) {
-            accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance()));
+            accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance(false)));
         }
         mAccountRecyclerViewAdapter.notifyDataSetChanged();
     }

@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 
@@ -26,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.himanshu.buckcounter.business.DatabaseHelper;
 import com.himanshu.buckcounter.business.Util;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -38,6 +40,10 @@ import android.view.Menu;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.text.DecimalFormatSymbols;
+
+import static com.himanshu.buckcounter.business.Constants.DECIMAL_FORMAT;
 
 public class MainActivity extends AppCompatActivity 
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -129,6 +135,38 @@ public class MainActivity extends AppCompatActivity
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             updateUI(account);
+        } else {
+            updateUI(null);
+        }
+        updateSummaries();
+    }
+
+    public void updateSummaries() {
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(this);
+        TextView overview1 = findViewById(R.id.overview1);
+        TextView overview2 = findViewById(R.id.overview2);
+        double totalAccountBalance = databaseHelper.getTotalAccountBalance(false);
+        double totalCreditLimit = databaseHelper.getTotalCreditLimit();
+        double totalCreditCardBalance = databaseHelper.getTotalAccountBalance(true);
+        int creditCardCount = databaseHelper.getAccountsCount(true);
+        overview1.setText(
+                getResources().getString(
+                        R.string.overview1,
+                        DECIMAL_FORMAT.format(totalAccountBalance)
+                )
+        );
+        if (creditCardCount > 0) {
+            overview2.setText(
+                    getResources().getString(
+                            R.string.overview2,
+                            DECIMAL_FORMAT.format(totalCreditLimit),
+                            DECIMAL_FORMAT.format(totalCreditLimit + totalCreditCardBalance)
+                    )
+            );
+        } else {
+            findViewById(R.id.overview2).setVisibility(View.GONE);
+            findViewById(R.id.summary_more).setVisibility(View.GONE);
+            findViewById(R.id.summary_less).setVisibility(View.GONE);
         }
     }
 
@@ -210,7 +248,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -251,24 +289,34 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void homeCardClicked(View view) {
-        Class targetClass;
-        switch (view.getId()) {
-            case R.id.accounts:
-                targetClass = AccountsActivity.class;
-                break;
-            case R.id.add_account:
-                targetClass = AddAccount.class;
-                break;
-            case R.id.transactions:
-                targetClass = TransactionsActivity.class;
-                break;
-            case R.id.add_transaction:
-                targetClass = AddTransaction.class;
-                break;
-            default:
-                targetClass = MainActivity.class;
+    public void homeClickHandler(View view) {
+        if (view.getId() == R.id.summary_less) {
+            view.setVisibility(View.GONE);
+            findViewById(R.id.overview2).setVisibility(View.GONE);
+            findViewById(R.id.summary_more).setVisibility(View.VISIBLE);
+        } else if (view.getId() == R.id.summary_more) {
+            view.setVisibility(View.GONE);
+            findViewById(R.id.overview2).setVisibility(View.VISIBLE);
+            findViewById(R.id.summary_less).setVisibility(View.VISIBLE);
+        } else {
+            Class targetClass;
+            switch (view.getId()) {
+                case R.id.accounts_card:
+                    targetClass = AccountsActivity.class;
+                    break;
+                case R.id.add_account:
+                    targetClass = AddAccount.class;
+                    break;
+                case R.id.transactions_card:
+                    targetClass = TransactionsActivity.class;
+                    break;
+                case R.id.add_transaction:
+                    targetClass = AddTransaction.class;
+                    break;
+                default:
+                    targetClass = MainActivity.class;
+            }
+            startActivity(new Intent(this, targetClass));
         }
-        startActivity(new Intent(this, targetClass));
     }
 }

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
-import android.widget.RadioGroup;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -80,19 +80,28 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     public void doSetup() {
-        RadioGroup selectTransactionType = findViewById(R.id.add_transaction_type);
-        selectTransactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        ChipGroup selectTransactionType = findViewById(R.id.add_transaction_type);
+        selectTransactionType.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            int lastCheckedId = R.id.transaction_type_credit;
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                if(radioGroup.getCheckedRadioButtonId() == R.id.transaction_type_contra){
-                    findViewById(R.id.select_credit_account_container).setVisibility(View.VISIBLE);
-                    findViewById(R.id.select_debit_account_container).setVisibility(View.VISIBLE);
-                } else if(radioGroup.getCheckedRadioButtonId() == R.id.transaction_type_debit) {
-                    findViewById(R.id.select_credit_account_container).setVisibility(View.GONE);
-                    findViewById(R.id.select_debit_account_container).setVisibility(View.VISIBLE);
-                } if(radioGroup.getCheckedRadioButtonId() == R.id.transaction_type_credit) {
-                    findViewById(R.id.select_credit_account_container).setVisibility(View.VISIBLE);
-                    findViewById(R.id.select_debit_account_container).setVisibility(View.GONE);
+            public void onCheckedChanged(ChipGroup group, int checkedId) {
+                if (checkedId == View.NO_ID) { // user tried to uncheck; keep the chip checked
+                    group.check(lastCheckedId);
+                    return;
+                }
+                lastCheckedId = checkedId;
+                switch (checkedId) {
+                    case R.id.transaction_type_contra:
+                        findViewById(R.id.select_credit_account_container).setVisibility(View.VISIBLE);
+                        findViewById(R.id.select_debit_account_container).setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.transaction_type_debit:
+                        findViewById(R.id.select_credit_account_container).setVisibility(View.GONE);
+                        findViewById(R.id.select_debit_account_container).setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.transaction_type_credit:
+                        findViewById(R.id.select_credit_account_container).setVisibility(View.VISIBLE);
+                        findViewById(R.id.select_debit_account_container).setVisibility(View.GONE);
                 }
             }
         });
@@ -118,7 +127,7 @@ public class AddTransaction extends AppCompatActivity {
     public void addTransactionClicked(View view) {
         view.setEnabled(false);
         view.setAlpha(0.5f);
-        int selectedTransactionType = ((RadioGroup)findViewById(R.id.add_transaction_type)).getCheckedRadioButtonId();
+        int selectedTransactionType = ((ChipGroup)findViewById(R.id.add_transaction_type)).getCheckedChipId();
         AutoCompleteTextView selectCreditAccount = findViewById(R.id.select_credit_account);
         AutoCompleteTextView selectDebitAccount = findViewById(R.id.select_debit_account);
         TextInputEditText transactionDate = findViewById(R.id.add_transaction_date);

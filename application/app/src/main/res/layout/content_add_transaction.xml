@@ -8,27 +8,40 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".AddTransaction"
     tools:showIn="@layout/activity_add_transaction">
-    <RadioGroup
+    <com.google.android.material.chip.ChipGroup
         android:id="@+id/add_transaction_type"
+        app:singleSelection="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <RadioButton
-            android:id="@+id/transaction_type_debit"
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/transaction_type_dr"/>
-        <RadioButton
+            android:textSize="12sp"
+            android:textColor="@color/colorAccent"
+            android:text="@string/transaction_type_hint"/>
+        <com.google.android.material.chip.Chip
             android:id="@+id/transaction_type_credit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/transaction_type_cr"/>
-        <RadioButton
-            android:id="@+id/transaction_type_contra"
-            android:layout_width="match_parent"
+            android:checked="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/transaction_type_contra"/>
-    </RadioGroup>
+            android:text="@string/transaction_type_cr"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:theme="@style/Theme.MaterialComponents.Light"/>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/transaction_type_debit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/transaction_type_dr"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:theme="@style/Theme.MaterialComponents.Light"/>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/transaction_type_contra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/transaction_type_contra"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:theme="@style/Theme.MaterialComponents.Light"/>
+    </com.google.android.material.chip.ChipGroup>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/select_credit_account_container"
         android:layout_width="match_parent"
