@@ -56,7 +56,7 @@ public class DriveServiceHelper {
             @Override
             public String call() throws Exception {
                 File metadata = new File()
-                        .setParents(Collections.singletonList("root"))
+                        .setParents(Collections.singletonList("root"))//"appDataFolder"))
                         .setMimeType("text/plain")
                         .setName("Untitled file");
 

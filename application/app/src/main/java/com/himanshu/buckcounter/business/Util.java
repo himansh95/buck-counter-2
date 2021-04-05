@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.Scope;
 
 public class Util {
     @SuppressWarnings("deprecation")
@@ -37,6 +39,7 @@ public class Util {
     public static GoogleSignInOptions getGoogleSignInOptions() {
         return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestScopes(new Scope(Scopes.DRIVE_FILE), new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
     }
 }
