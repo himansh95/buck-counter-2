@@ -30,5 +30,6 @@ public class Constants {
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("₹ ##,##,##,##,###.##");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     public static final String VALID_TEXT_REGEX = "[\\w\\s\\d\\~\\`\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\_\\/\\-\\+\\=\\{\\}\\[\\]\\|\\\\\\:\\;\\'\\\"\\<\\>\\,\\.\\?]+";
-    public static final String VALID_AMOUNT_REGEX = "^-?[0-9]+(\\.[0-9]+)?$";
+    public static final String VALID_AMOUNT_REGEX = "^[0-9]+(\\.[0-9]+)?$";
+    public static final String VALID_NEGATIVE_AMOUNT_REGEX = "^-?[0-9]+(\\.[0-9]+)?$";
 }

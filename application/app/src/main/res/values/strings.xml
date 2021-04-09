@@ -56,6 +56,7 @@
     <string name="no_transactions_found">No Transactions Found!</string>
     <string name="no_accounts_found">No Accounts Found!</string>
     <string name="add_transaction_date_hint">Enter transaction date</string>
+    <string name="edit_account_credit_limit">Edit Credit Limit</string>
     <string name="edit_account_name">Edit Name</string>
     <string name="title_activity_export_xls">Export To Excel</string>
     <!-- Export Strings -->

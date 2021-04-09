@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.himanshu.buckcounter.business.DatabaseHelper;
 import java.util.List;
 
 import static com.himanshu.buckcounter.business.Constants.DECIMAL_FORMAT;
+import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
 import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 
 public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecyclerViewAdapter.ViewHolder> {
@@ -73,8 +75,12 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
 
     private void showPopupMenu(View view, final Account account, final int position) {
         PopupMenu popupMenu = new PopupMenu(context, view);
+        Menu menu = popupMenu.getMenu();
         MenuInflater menuInflater = popupMenu.getMenuInflater();
-        menuInflater.inflate(R.menu.account_context_menu, popupMenu.getMenu());
+        menuInflater.inflate(R.menu.account_context_menu, menu);
+        if (account.isCreditCard()) {
+            menu.findItem(R.id.edit_account_credit_limit).setVisible(true);
+        }
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -123,6 +129,46 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                             }
                         });
                         editName.show();
+                        return true;
+                    case R.id.edit_account_credit_limit:
+                        final AlertDialog editCreditLimit = new AlertDialog.Builder(context)
+                                .setIcon(R.mipmap.ic_launcher_round)
+                                .setTitle(R.string.edit_account_credit_limit)
+                                .setView(R.layout.edit_account_credit_limit)
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .create();
+                        editCreditLimit.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialogInterface) {
+                                final EditText accountCreditLimit = editCreditLimit.findViewById(R.id.edit_credit_limit);
+                                accountCreditLimit.setText(String.valueOf(account.getCreditLimit()));
+                                accountCreditLimit.selectAll();
+                                editCreditLimit.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (accountCreditLimit.getText() == null || accountCreditLimit.getText().toString().isEmpty() || !accountCreditLimit.getText().toString().matches(VALID_AMOUNT_REGEX)) {
+                                            ((TextInputLayout)editCreditLimit.findViewById(R.id.edit_credit_limit_container)).setError(context.getText(R.string.add_credit_limit_error));
+                                            return;
+                                        } else {
+                                            ((TextInputLayout)editCreditLimit.findViewById(R.id.edit_credit_limit_container)).setErrorEnabled(false);
+                                        }
+                                        double newCreditLimit = Double.parseDouble(accountCreditLimit.getText().toString().trim().toLowerCase());
+                                        if (newCreditLimit == account.getCreditLimit()) {
+                                            editCreditLimit.dismiss();
+                                            return;
+                                        }
+                                        boolean editCreditLimitSuccessful = DatabaseHelper.getInstance(context).editAccountCreditLimit(account, newCreditLimit);
+                                        if (editCreditLimitSuccessful) {
+                                            mValues.get(position).setCreditLimit(newCreditLimit);
+                                            AccountRecyclerViewAdapter.this.notifyItemChanged(position);
+                                        }
+                                        editCreditLimit.dismiss();
+                                    }
+                                });
+                            }
+                        });
+                        editCreditLimit.show();
                         return true;
                     case R.id.delete_account:
                         AlertDialog deleteAccount = new AlertDialog.Builder(context)

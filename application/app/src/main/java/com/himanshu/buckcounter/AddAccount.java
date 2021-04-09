@@ -22,6 +22,7 @@ import java.util.Date;
 
 import static com.himanshu.buckcounter.business.Constants.DATE_FORMAT;
 import static com.himanshu.buckcounter.business.Constants.VALID_AMOUNT_REGEX;
+import static com.himanshu.buckcounter.business.Constants.VALID_NEGATIVE_AMOUNT_REGEX;
 import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 
 public class AddAccount extends AppCompatActivity {
@@ -76,7 +77,7 @@ public class AddAccount extends AppCompatActivity {
         } else {
             ((TextInputLayout) findViewById(R.id.add_account_name_container)).setErrorEnabled(false);
         }
-        if (!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().trim().matches(VALID_AMOUNT_REGEX))) {
+        if (!initWithZero.isChecked() && (accountBalance.getText() == null || accountBalance.getText().toString().isEmpty() || !accountBalance.getText().toString().trim().matches(VALID_NEGATIVE_AMOUNT_REGEX))) {
             validationFailed = true;
             ((TextInputLayout) findViewById(R.id.add_account_balance_container)).setError(getText(R.string.add_account_balance_error));
         } else {

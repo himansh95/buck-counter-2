@@ -313,6 +313,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
     }
 
+    public boolean editAccountCreditLimit(Account account, double newCreditLimit) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_ACCOUNTS_CREDIT_LIMIT, newCreditLimit);
+        return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
+    }
+
     public boolean deleteAccount(Account account) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         return sqLiteDatabase.delete(TABLE_ACCOUNTS, KEY_ACCOUNTS_NAME + " = ?", new String[]{String.valueOf(account.getName())}) > 0;
