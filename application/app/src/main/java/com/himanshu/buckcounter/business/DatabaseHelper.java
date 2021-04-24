@@ -325,6 +325,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.delete(TABLE_ACCOUNTS, KEY_ACCOUNTS_NAME + " = ?", new String[]{String.valueOf(account.getName())}) > 0;
     }
 
+    public boolean deleteAllAccounts() {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        int accountCount = getAccountsCount(false);
+        return sqLiteDatabase.delete(TABLE_ACCOUNTS, null, null) == accountCount;
+    }
+
     public String[] getAllAccountNames() {
         ArrayList<String> accountNames = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();

@@ -103,7 +103,7 @@ public class AddAccount extends AppCompatActivity {
         }
 
         if (!initWithZero.isChecked()) {
-            double initialBalance = Double.valueOf(accountBalance.getText().toString().trim());
+            double initialBalance = Double.parseDouble(accountBalance.getText().toString().trim());
             Transaction.TransactionType transactionType = initialBalance > 0 ? Transaction.TransactionType.DR : Transaction.TransactionType.CR;
             try {
                 accountAddedSuccessfully = accountAddedSuccessfully &&

@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 
@@ -40,8 +39,6 @@ import android.view.Menu;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.text.DecimalFormatSymbols;
 
 import static com.himanshu.buckcounter.business.Constants.DECIMAL_FORMAT;
 

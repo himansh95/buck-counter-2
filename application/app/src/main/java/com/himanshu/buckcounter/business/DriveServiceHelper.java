@@ -56,7 +56,7 @@ public class DriveServiceHelper {
             @Override
             public String call() throws Exception {
                 File metadata = new File()
-                        .setParents(Collections.singletonList("root"))//"appDataFolder"))
+                        .setParents(Collections.singletonList("appDataFolder"))
                         .setMimeType("text/plain")
                         .setName("Untitled file");
 
@@ -132,7 +132,7 @@ public class DriveServiceHelper {
         return Tasks.call(mExecutor, new Callable<FileList>() {
             @Override
             public FileList call() throws Exception {
-                return mDriveService.files().list().setSpaces("drive").execute();
+                return mDriveService.files().list().setSpaces("appDataFolder").execute();
             }
         });
     }

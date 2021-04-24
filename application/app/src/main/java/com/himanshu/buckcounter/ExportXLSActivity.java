@@ -5,19 +5,33 @@ import android.app.DownloadManager;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.util.Pair;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.FileList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.himanshu.buckcounter.beans.Account;
@@ -25,18 +39,6 @@ import com.himanshu.buckcounter.beans.Backup;
 import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 import com.himanshu.buckcounter.business.DriveServiceHelper;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -88,8 +90,8 @@ public class ExportXLSActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab2 = findViewById(R.id.fab2);
-        fab2.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab_backup = findViewById(R.id.fab_backup);
+        fab_backup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ExportXLSActivity.this);
@@ -101,11 +103,139 @@ public class ExportXLSActivity extends AppCompatActivity {
                 }
             }
         });
+
+        FloatingActionButton fab_restore = findViewById(R.id.fab_restore);
+        fab_restore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(ExportXLSActivity.this);
+
+                if (account != null) {
+                    handleRestore(account);
+                } else {
+                    Toast.makeText(ExportXLSActivity.this, "Sign in to restore backup dude!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private void handleRestore (GoogleSignInAccount googleAccount) {
+        final FloatingActionButton fab_restore = findViewById(R.id.fab_restore);
+        fab_restore.setEnabled(false);
+        fab_restore.setAlpha(0.5f);
+        findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+        setUpDriveServiceHelper(googleAccount);
+
+        try {
+            mDriveServiceHelper.queryFiles()
+                    .addOnSuccessListener(new OnSuccessListener<FileList>() {
+                        @Override
+                        public void onSuccess(FileList fileList) {
+                            List<com.google.api.services.drive.model.File> list = fileList.getFiles();
+                            com.google.api.services.drive.model.File file = list.get(0);
+                            mDriveServiceHelper.readFile(file.getId())
+                                    .addOnSuccessListener(new OnSuccessListener<Pair<String, String>>() {
+                                        @Override
+                                        public void onSuccess(Pair<String, String> stringStringPair) {
+                                            Gson gson = new Gson();
+                                            Backup backup = gson.fromJson(stringStringPair.second, Backup.class);
+                                            DatabaseHelper dbHelper = DatabaseHelper.getInstance(ExportXLSActivity.this);
+                                            dbHelper.deleteAllAccounts();
+                                            for (Account account: backup.getAccountList()) {
+                                                account.setBalance(0);
+                                                dbHelper.insertAccount(account);
+                                            }
+                                            for (Transaction transaction: backup.getTransactionList()) {
+                                                dbHelper.insertTransaction(transaction);
+                                            }
+                                            findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                                            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_layout),
+                                                    "Data Restored",
+                                                    Snackbar.LENGTH_SHORT);
+                                            snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                                @Override
+                                                public void onDismissed(Snackbar transientBottomBar, int event) {
+                                                    super.onDismissed(transientBottomBar, event);
+                                                    fab_restore.setEnabled(true);
+                                                    fab_restore.setAlpha(1f);
+                                                }
+                                            });
+                                            snackbar.show();
+                                        }
+                                    });
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void handleBackup (GoogleSignInAccount googleAccount) {
-        new GoogleDriveBackup().execute(googleAccount);
+        final FloatingActionButton fab_backup = findViewById(R.id.fab_backup);
+        fab_backup.setEnabled(false);
+        fab_backup.setAlpha(0.5f);
+        findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+        setUpDriveServiceHelper(googleAccount);
+
+        try {
+            mDriveServiceHelper.createFile()
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            String fileName = String.format("Backup_%s.txt", new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(new Date()));
+                            List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts();
+                            List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions();
+
+                            Backup backup = new Backup(accounts, transactions);
+                            Gson gson = new Gson();
+                            Type type = new TypeToken<Backup>() {}.getType();
+                            String jsonString = gson.toJson(backup, type);
+                            mDriveServiceHelper.saveFile(s, fileName, jsonString)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                                            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_layout),
+                                                    task.isSuccessful() ? "Data Backed Up" : "Data Not Backed Up",
+                                                    Snackbar.LENGTH_SHORT);
+                                            snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                                @Override
+                                                public void onDismissed(Snackbar transientBottomBar, int event) {
+                                                    super.onDismissed(transientBottomBar, event);
+                                                    fab_backup.setEnabled(true);
+                                                    fab_backup.setAlpha(1f);
+                                                }
+                                            });
+                                            snackbar.show();
+                                        }
+                                    });
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void setUpDriveServiceHelper(GoogleSignInAccount googleAccount) {
+        // Use the authenticated account to sign in to the Drive service.
+        GoogleAccountCredential credential =
+                GoogleAccountCredential.usingOAuth2(
+                        ExportXLSActivity.this, Collections.singleton(DriveScopes.DRIVE_FILE));
+        credential.setSelectedAccount(googleAccount.getAccount());
+        Drive googleDriveService =
+                new Drive.Builder(
+                        AndroidHttp.newCompatibleTransport(),
+                        new GsonFactory(),
+                        credential)
+                        .setApplicationName(getString(R.string.app_name))
+                        .build();
+
+        // The DriveServiceHelper encapsulates all REST API and SAF functionality.
+        // Its instantiation is required before handling any onClick actions.
+        mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
     }
 
     private void exportToExcel() {
@@ -143,81 +273,6 @@ public class ExportXLSActivity extends AppCompatActivity {
                         Snackbar.LENGTH_SHORT)
                         .show();
             }
-        }
-    }
-
-    public class GoogleDriveBackup extends AsyncTask<GoogleSignInAccount, Void, Boolean> {
-        private final ProgressBar progressBar = findViewById(R.id.progress_bar);
-        private final FloatingActionButton fab2 = findViewById(R.id.fab2);
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-            fab2.setEnabled(false);
-            fab2.setAlpha(0.5f);
-        }
-
-        @Override
-        protected Boolean doInBackground(GoogleSignInAccount... accounts) {
-            GoogleSignInAccount googleAccount = accounts[0];
-            // Use the authenticated account to sign in to the Drive service.
-            GoogleAccountCredential credential =
-                    GoogleAccountCredential.usingOAuth2(
-                            ExportXLSActivity.this, Collections.singleton(DriveScopes.DRIVE_FILE));
-            credential.setSelectedAccount(googleAccount.getAccount());
-            Drive googleDriveService =
-                    new Drive.Builder(
-                            AndroidHttp.newCompatibleTransport(),
-                            new GsonFactory(),
-                            credential)
-                            .setApplicationName(getString(R.string.app_name))
-                            .build();
-
-            // The DriveServiceHelper encapsulates all REST API and SAF functionality.
-            // Its instantiation is required before handling any onClick actions.
-            mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-            // Backup Text File Generation
-            try {
-                Task<String> fileCreateTask = mDriveServiceHelper.createFile();
-                fileCreateTask.addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        String driveFileId = task.getResult();
-                        String fileName = String.format("Backup_%s.txt", new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(new Date()));
-                        List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts();
-                        List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions();
-
-                        Backup backup = new Backup(accounts, transactions);
-                        Type type = new TypeToken<Backup>() {}.getType();
-                        Gson gson = new Gson();
-                        String jsonString = gson.toJson(backup, type);
-
-                        mDriveServiceHelper.saveFile(driveFileId, fileName, jsonString);
-                    }
-                });
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            this.progressBar.setVisibility(View.GONE);
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_layout),
-                    aBoolean ? "Data Backed Up" : "Date Not Backed Up",
-                    Snackbar.LENGTH_SHORT);
-            snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                @Override
-                public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
-                    fab2.setEnabled(true);
-                    fab2.setAlpha(1f);
-                }
-            });
-            snackbar.show();
         }
     }
 

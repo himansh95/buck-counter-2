@@ -33,12 +33,21 @@
         app:srcCompat="@drawable/white_transaction_export" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab2"
+        android:id="@+id/fab_backup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/fab"
         app:srcCompat="@drawable/baseline_file_upload_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_restore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/fab"
+        app:srcCompat="@drawable/baseline_file_download_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
