@@ -77,14 +77,15 @@
                     android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/add_transaction_date_container"
+                android:id="@+id/add_transaction_amount_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/add_transaction_date"
+                    android:id="@+id/add_transaction_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/add_transaction_date_hint"/>
+                    android:inputType="numberDecimal|numberSigned"
+                    android:hint="@string/add_transaction_amount_hint"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/add_transaction_particulars_container"
@@ -97,15 +98,14 @@
                     android:hint="@string/add_transaction_particulars_hint"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/add_transaction_amount_container"
+                android:id="@+id/add_transaction_date_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/add_transaction_amount"
+                    android:id="@+id/add_transaction_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:hint="@string/add_transaction_amount_hint"/>
+                    android:hint="@string/add_transaction_date_hint"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
