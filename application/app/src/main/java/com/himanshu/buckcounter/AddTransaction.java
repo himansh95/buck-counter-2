@@ -122,7 +122,7 @@ public class AddTransaction extends AppCompatActivity {
             }
         });
         setUpParticularsTextView();
-        findViewById(R.id.add_transaction_particulars).requestFocus();
+        findViewById(R.id.add_transaction_amount).requestFocus();
     }
 
     public void addTransactionClicked(View view) {
