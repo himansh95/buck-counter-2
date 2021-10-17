@@ -33,10 +33,12 @@ import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecyclerViewAdapter.ViewHolder> {
     private final List<Account> mValues;
     private Context context;
+    private boolean isArchivedAccountsList;
 
-    public AccountRecyclerViewAdapter(List<Account> items, Context context) {
+    public AccountRecyclerViewAdapter(List<Account> items, Context context, boolean isArchivedAccountsList) {
         mValues = items;
         this.context = context;
+        this.isArchivedAccountsList = isArchivedAccountsList;
     }
 
     @NonNull
@@ -53,7 +55,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         holder.mItem = account;
         holder.mAccountName.setText(account.getName());
         holder.mAccountBalance.setText(DECIMAL_FORMAT.format(account.getBalance()));
-        if (position == 0) {
+        if (position == 0 && !isArchivedAccountsList) {
             holder.mAccountContextMenu.setVisibility(View.INVISIBLE);
         } else {
             holder.mAccountContextMenu.setVisibility(View.VISIBLE);
@@ -77,9 +79,13 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         PopupMenu popupMenu = new PopupMenu(context, view);
         Menu menu = popupMenu.getMenu();
         MenuInflater menuInflater = popupMenu.getMenuInflater();
-        menuInflater.inflate(R.menu.account_context_menu, menu);
-        if (account.isCreditCard()) {
-            menu.findItem(R.id.edit_account_credit_limit).setVisible(true);
+        if (isArchivedAccountsList) {
+            menuInflater.inflate(R.menu.archived_account_context_menu, menu);
+        } else {
+            menuInflater.inflate(R.menu.account_context_menu, menu);
+            if (account.isCreditCard()) {
+                menu.findItem(R.id.edit_account_credit_limit).setVisible(true);
+            }
         }
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -181,12 +187,9 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                     public void onClick(DialogInterface dialog, int which) {
                                         boolean accountArchivedSuccessfully = DatabaseHelper.getInstance(context).archiveAccount(account);
                                         if (accountArchivedSuccessfully) {
-                                            mValues.clear();
-                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts(false));
-                                            if (mValues.size() > 0 ) {
-                                                mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance(false)));
-                                            }
-                                            AccountRecyclerViewAdapter.this.notifyDataSetChanged();
+                                            mValues.remove(position);
+                                            AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
+                                            AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
                                         }
                                     }
                                 })
@@ -204,17 +207,23 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         boolean accountDeletedSuccessfully = DatabaseHelper.getInstance(context).deleteAccount(account);
                                         if (accountDeletedSuccessfully) {
-                                            mValues.clear();
-                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts(false));
-                                            if (mValues.size() > 0 ) {
-                                                mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance(false)));
-                                            }
-                                            AccountRecyclerViewAdapter.this.notifyDataSetChanged();
+                                            mValues.remove(position);
+                                            AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
+                                            AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
                                         }
                                     }
                                 })
                                 .create();
                         deleteAccount.show();
+                        return true;
+                    case R.id.unarchive_account:
+                        boolean accountUnarchivedSuccessfully = DatabaseHelper.getInstance(context).unarchiveAccount(account);
+
+                        if (accountUnarchivedSuccessfully) {
+                            mValues.remove(position);
+                            AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
+                            AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
+                        }
                         return true;
                     default:
                         return false;

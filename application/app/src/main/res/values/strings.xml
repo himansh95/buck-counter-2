@@ -136,4 +136,6 @@
     <string name="overview2">Total Credit Limit\n%s\n\nRemaining Credit Limit\n%s</string>
     <string name="archive_account">Archive Account</string>
     <string name="label_show_archived_accounts">Archived Accounts</string>
+    <string name="title_activity_archived_accounts">Archived Accounts</string>
+    <string name="unarchive_account">Unarchive Account</string>
 </resources>

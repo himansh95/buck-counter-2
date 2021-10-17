@@ -197,6 +197,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return accounts;
     }
 
+    public List<Account> getArchivedAccounts() {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        List<Account> accounts = new ArrayList<>();
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_ARCHIVED + " = ? order by " + KEY_ACCOUNTS_IS_CREDIT_CARD + ", " + KEY_ACCOUNTS_NAME, new String[]{Integer.toString(1)});
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                accounts.add(new Account(
+                        cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME)),
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_BALANCE)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_ACCOUNTS_IS_CREDIT_CARD)) == 1,
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_CREDIT_LIMIT))
+                ));
+            }
+            cursor.close();
+        }
+        return accounts;
+    }
+
     public List<Transaction> getAllTransactions() {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Transaction> transactions = new ArrayList<>();
@@ -348,6 +367,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_ACCOUNTS_IS_ARCHIVED, 1);
+        return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
+    }
+
+    public boolean unarchiveAccount(Account account) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_ACCOUNTS_IS_ARCHIVED, 0);
         return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
     }
 
