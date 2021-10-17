@@ -170,6 +170,29 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                         });
                         editCreditLimit.show();
                         return true;
+                    case R.id.archive_account:
+                        AlertDialog archiveAccount = new AlertDialog.Builder(context)
+                                .setIcon(R.mipmap.ic_launcher_round)
+                                .setTitle(R.string.archive_account)
+                                .setMessage("Are you sure you want to archive this account?")
+                                .setNegativeButton(android.R.string.no, null)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        boolean accountArchivedSuccessfully = DatabaseHelper.getInstance(context).archiveAccount(account);
+                                        if (accountArchivedSuccessfully) {
+                                            mValues.clear();
+                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts(false));
+                                            if (mValues.size() > 0 ) {
+                                                mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance(false)));
+                                            }
+                                            AccountRecyclerViewAdapter.this.notifyDataSetChanged();
+                                        }
+                                    }
+                                })
+                                .create();
+                        archiveAccount.show();
+                        return true;
                     case R.id.delete_account:
                         AlertDialog deleteAccount = new AlertDialog.Builder(context)
                                 .setIcon(R.mipmap.ic_launcher_round)
@@ -182,7 +205,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                         boolean accountDeletedSuccessfully = DatabaseHelper.getInstance(context).deleteAccount(account);
                                         if (accountDeletedSuccessfully) {
                                             mValues.clear();
-                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts());
+                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllAccounts(false));
                                             if (mValues.size() > 0 ) {
                                                 mValues.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(context).getTotalAccountBalance(false)));
                                             }

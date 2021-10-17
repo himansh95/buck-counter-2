@@ -5,6 +5,7 @@ public class Account {
     private double balance;
     private boolean isCreditCard;
     private double creditLimit;
+    private boolean isArchived;
 
     public Account() {}
 
@@ -61,6 +62,14 @@ public class Account {
 
     public void setCreditLimit(double creditLimit) {
         this.creditLimit = creditLimit;
+    }
+
+    public boolean isArchived() {
+        return isArchived;
+    }
+
+    public void setArchived(boolean archived) {
+        isArchived = archived;
     }
 
     @Override

@@ -134,4 +134,6 @@
     <string name="overview">overview</string>
     <string name="overview1">Total Account Balance\n%s</string>
     <string name="overview2">Total Credit Limit\n%s\n\nRemaining Credit Limit\n%s</string>
+    <string name="archive_account">Archive Account</string>
+    <string name="label_show_archived_accounts">Archived Accounts</string>
 </resources>

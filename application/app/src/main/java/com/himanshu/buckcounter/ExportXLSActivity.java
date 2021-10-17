@@ -185,7 +185,7 @@ public class ExportXLSActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(String s) {
                             String fileName = String.format("Backup_%s.txt", new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(new Date()));
-                            List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts();
+                            List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts(true);
                             List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions();
 
                             Backup backup = new Backup(accounts, transactions);
@@ -314,7 +314,7 @@ public class ExportXLSActivity extends AppCompatActivity {
             String headerParticulars = getString(R.string.export_sheet_header_particulars);
 
             // Generate column headings
-            List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts();
+            List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts(true);
 
             Map<String, Integer> debitColumns = new HashMap<>();
             Map<String, Integer> creditColumns = new HashMap<>();

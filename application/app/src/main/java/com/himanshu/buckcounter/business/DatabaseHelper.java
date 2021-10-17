@@ -49,7 +49,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_ACCOUNTS_NAME + " text PRIMARY KEY,"
                 + KEY_ACCOUNTS_BALANCE + " real NOT NULL,"
                 + KEY_ACCOUNTS_IS_CREDIT_CARD + " integer DEFAULT 0,"
-                + KEY_ACCOUNTS_CREDIT_LIMIT + " real"
+                + KEY_ACCOUNTS_CREDIT_LIMIT + " real,"
+                + KEY_ACCOUNTS_IS_ARCHIVED + " integer DEFAULT 0"
                 + ")"
         );
         sqLiteDatabase.execSQL("create table " + TABLE_TRANSACTIONS + "("
@@ -108,13 +109,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("drop table " + TABLE_TRANSACTIONS);
-        sqLiteDatabase.execSQL("drop table " + TABLE_ACCOUNTS);
-        sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_INSERT);
-        sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_DELETE);
-        sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_UPDATE_AMOUNT);
-        onCreate(sqLiteDatabase);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        if (oldVersion == 1 && newVersion == 2) {
+            sqLiteDatabase.execSQL("alter table " + TABLE_ACCOUNTS + " add column " + KEY_ACCOUNTS_IS_ARCHIVED + " INTEGER default 0");
+        } else {
+            sqLiteDatabase.execSQL("drop table " + TABLE_TRANSACTIONS);
+            sqLiteDatabase.execSQL("drop table " + TABLE_ACCOUNTS);
+            sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_INSERT);
+            sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_DELETE);
+            sqLiteDatabase.execSQL("drop trigger if exists " + TRIGGER_TRANSACTIONS_UPDATE_AMOUNT);
+            onCreate(sqLiteDatabase);
+        }
     }
 
     private void insertDummyContent(SQLiteDatabase sqLiteDatabase) {
@@ -167,10 +172,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return super.getReadableDatabase();
     }
 
-    public List<Account> getAllAccounts() {
+    public List<Account> getAllAccounts(boolean includeArchivedAccounts) {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Account> accounts = new ArrayList<>();
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_IS_CREDIT_CARD + ", " + KEY_ACCOUNTS_NAME, null);
+        Cursor cursor;
+
+        if (includeArchivedAccounts) {
+            cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_IS_ARCHIVED + ", " + KEY_ACCOUNTS_IS_CREDIT_CARD + ", " + KEY_ACCOUNTS_NAME, null);
+        } else {
+            cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_ARCHIVED + " = ? order by " + KEY_ACCOUNTS_IS_CREDIT_CARD + ", " + KEY_ACCOUNTS_NAME, new String[]{Integer.toString(0)});
+        }
+
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 accounts.add(new Account(
@@ -213,9 +225,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         Cursor cursor;
         if (isCreditCard) {
-            cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_CREDIT_CARD + " = ?", new String[]{Integer.toString(1)});
+            cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_CREDIT_CARD + " = ? and " + KEY_ACCOUNTS_IS_ARCHIVED + " = ?", new String[]{Integer.toString(1), Integer.toString(0)});
         } else {
-            cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS, null);
+            cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_BALANCE + ") from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_ARCHIVED + " = ?", new String[]{Integer.toString(0)});
         }
         if(cursor.moveToFirst()){
             total = cursor.getDouble(0);
@@ -227,7 +239,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public double getTotalCreditLimit() {
         double total = 0.0;
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_CREDIT_LIMIT + ") from " + TABLE_ACCOUNTS, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("select sum(" + KEY_ACCOUNTS_CREDIT_LIMIT + ") from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_ARCHIVED + " = ?", new String[]{String.valueOf(0)});
         if(cursor.moveToFirst()){
             total = cursor.getDouble(0);
         }
@@ -272,6 +284,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(KEY_ACCOUNTS_BALANCE, account.getBalance());
         contentValues.put(KEY_ACCOUNTS_IS_CREDIT_CARD, account.isCreditCard() ? 1 : 0);
         contentValues.put(KEY_ACCOUNTS_CREDIT_LIMIT, account.getCreditLimit());
+        contentValues.put(KEY_ACCOUNTS_IS_ARCHIVED, account.isArchived() ? 1 : 0);
         return sqLiteDatabase.insert(TABLE_ACCOUNTS, null, contentValues) > 0;
     }
 
@@ -331,10 +344,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.delete(TABLE_ACCOUNTS, null, null) == accountCount;
     }
 
+    public boolean archiveAccount(Account account) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_ACCOUNTS_IS_ARCHIVED, 1);
+        return sqLiteDatabase.update(TABLE_ACCOUNTS, contentValues, KEY_ACCOUNTS_NAME + " = ?", new String[]{account.getName()}) > 0;
+    }
+
     public String[] getAllAccountNames() {
         ArrayList<String> accountNames = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_NAME + " from " + TABLE_ACCOUNTS + " order by " + KEY_ACCOUNTS_NAME, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("select " + KEY_ACCOUNTS_NAME + " from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_IS_ARCHIVED + " = ? order by " + KEY_ACCOUNTS_NAME, new String[]{String.valueOf(0)});
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 accountNames.add(cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME)).toUpperCase());

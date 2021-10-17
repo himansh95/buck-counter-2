@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public class Constants {
     // database constants
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 2;
     static final String DB_NAME = "BUCK_COUNTER_DB";
     static final String TABLE_ACCOUNTS = "ACCOUNTS";
     static final String TABLE_TRANSACTIONS = "TRANSACTIONS";
@@ -14,6 +14,7 @@ public class Constants {
     static final String KEY_ACCOUNTS_BALANCE = "BALANCE";
     static final String KEY_ACCOUNTS_IS_CREDIT_CARD = "IS_CREDIT_CARD";
     static final String KEY_ACCOUNTS_CREDIT_LIMIT = "CREDIT_LIMIT";
+    static final String KEY_ACCOUNTS_IS_ARCHIVED = "IS_ARCHIVED";
     static final String KEY_TRANSACTIONS_ID = "_id";
     static final String KEY_TRANSACTIONS_TYPE = "TYPE";
     static final String KEY_TRANSACTIONS_PARTICULARS = "PARTICULARS";

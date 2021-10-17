@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ public class AccountsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setEmptyView(findViewById(R.id.empty_list_card));
         accountList = new ArrayList<>();
-        accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
+        accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts(false));
         if (accountList.size() > 0) {
             accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance(false)));
         }
@@ -49,10 +52,34 @@ public class AccountsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_accounts, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.show_archived_accounts:
+                showArchivedAccounts();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void showArchivedAccounts() {
+        Intent intent = new Intent(this, ArchivedAccountsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         accountList.clear();
-        accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts());
+        accountList.addAll(DatabaseHelper.getInstance(this).getAllAccounts(false));
         if (accountList.size() > 0) {
             accountList.add(0, new Account("\"Total Balance\"", DatabaseHelper.getInstance(this).getTotalAccountBalance(false)));
         }
