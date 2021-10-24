@@ -138,4 +138,6 @@
     <string name="label_show_archived_accounts">Archived Accounts</string>
     <string name="title_activity_archived_accounts">Archived Accounts</string>
     <string name="unarchive_account">Unarchive Account</string>
+    <string name="balance">Balance</string>
+    <string name="total_balance">Total Balance</string>
 </resources>

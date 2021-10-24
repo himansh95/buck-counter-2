@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,7 +57,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         holder.mAccountName.setText(account.getName());
         holder.mAccountBalance.setText(DECIMAL_FORMAT.format(account.getBalance()));
         if (position == 0 && !isArchivedAccountsList) {
-            holder.mAccountContextMenu.setVisibility(View.INVISIBLE);
+            holder.mAccountContextMenu.setVisibility(View.GONE);
         } else {
             holder.mAccountContextMenu.setVisibility(View.VISIBLE);
             holder.mAccountContextMenu.setOnClickListener(new View.OnClickListener() {
@@ -190,6 +191,8 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                             mValues.remove(position);
                                             AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
                                             AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
+                                            mValues.get(0).setBalance(DatabaseHelper.getInstance(context).getTotalAccountBalance(false));
+                                            AccountRecyclerViewAdapter.this.notifyItemChanged(0);
                                         }
                                     }
                                 })
@@ -210,6 +213,8 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                             mValues.remove(position);
                                             AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
                                             AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
+                                            mValues.get(0).setBalance(DatabaseHelper.getInstance(context).getTotalAccountBalance(false));
+                                            AccountRecyclerViewAdapter.this.notifyItemChanged(0);
                                         }
                                     }
                                 })

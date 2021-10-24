@@ -50,7 +50,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         final Transaction transaction = mValues.get(position);
         holder.mItem = transaction;
         holder.mTransactionAmount.setText(DECIMAL_FORMAT.format(transaction.getAmount()));
-        holder.mTransactionParticulars.setText(new StringBuffer("\"").append(transaction.getParticulars()).append("\""));
+        holder.mTransactionParticulars.setText(transaction.getParticulars());
         holder.mTransactionDate.setText(DATE_FORMAT.format(transaction.getTimestamp()));
         if (transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
             holder.mTransactionType.setImageResource(R.mipmap.transaction_contra);
