@@ -116,6 +116,7 @@ public class AddTransaction extends AppCompatActivity {
         addTransactionDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Util.hideSoftKeyboard(AddTransaction.this, view);
                 view.setFocusable(true);
                 DialogFragment newFragment = new DatePickerFragment(AddTransaction.this);
                 newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -126,6 +127,7 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     public void addTransactionClicked(View view) {
+        Util.hideSoftKeyboard(this, view);
         view.setEnabled(false);
         view.setAlpha(0.5f);
         int selectedTransactionType = ((ChipGroup)findViewById(R.id.add_transaction_type)).getCheckedChipId();

@@ -9,6 +9,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
+import com.himanshu.buckcounter.business.Util;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -62,6 +63,7 @@ public class AddAccount extends AppCompatActivity {
     }
 
     public void addActivityClicked(View view) {
+        Util.hideSoftKeyboard(this, view);
         view.setEnabled(false);
         view.setAlpha(0.5f);
         TextInputEditText accountName = findViewById(R.id.add_account_name);
