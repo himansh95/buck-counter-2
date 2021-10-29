@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +59,11 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         holder.mAccountBalance.setText(DECIMAL_FORMAT.format(account.getBalance()));
         if (position == 0 && !isArchivedAccountsList) {
             holder.mAccountContextMenu.setVisibility(View.GONE);
+            holder.mAccountIcon.setVisibility(View.GONE);
+            holder.mAccountName.setTypeface(null, Typeface.BOLD);
         } else {
+            holder.mAccountIcon.setVisibility(View.VISIBLE);
+            holder.mAccountName.setTypeface(null, Typeface.NORMAL);
             holder.mAccountContextMenu.setVisibility(View.VISIBLE);
             holder.mAccountContextMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,8 +76,10 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
             ((TextView)holder.mCreditCardDetails.findViewById(R.id.credit_limit)).setText(DECIMAL_FORMAT.format(account.getCreditLimit()));
             ((TextView)holder.mCreditCardDetails.findViewById(R.id.remaining_credit_limit)).setText(DECIMAL_FORMAT.format(account.getCreditLimit() + account.getBalance()));
             holder.mCreditCardDetails.setVisibility(View.VISIBLE);
+            holder.mAccountIcon.setImageResource(R.mipmap.credit_card);
         } else {
             holder.mCreditCardDetails.setVisibility(View.GONE);
+            holder.mAccountIcon.setImageResource(R.mipmap.account);
         }
     }
 
@@ -178,26 +185,14 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                         editCreditLimit.show();
                         return true;
                     case R.id.archive_account:
-                        AlertDialog archiveAccount = new AlertDialog.Builder(context)
-                                .setIcon(R.mipmap.ic_launcher_round)
-                                .setTitle(R.string.archive_account)
-                                .setMessage("Are you sure you want to archive this account?")
-                                .setNegativeButton(android.R.string.no, null)
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        boolean accountArchivedSuccessfully = DatabaseHelper.getInstance(context).archiveAccount(account);
-                                        if (accountArchivedSuccessfully) {
-                                            mValues.remove(position);
-                                            AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
-                                            AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
-                                            mValues.get(0).setBalance(DatabaseHelper.getInstance(context).getTotalAccountBalance(false));
-                                            AccountRecyclerViewAdapter.this.notifyItemChanged(0);
-                                        }
-                                    }
-                                })
-                                .create();
-                        archiveAccount.show();
+                        boolean accountArchivedSuccessfully = DatabaseHelper.getInstance(context).archiveAccount(account);
+                        if (accountArchivedSuccessfully) {
+                            mValues.remove(position);
+                            AccountRecyclerViewAdapter.this.notifyItemRemoved(position);
+                            AccountRecyclerViewAdapter.this.notifyItemRangeChanged(position, mValues.size());
+                            mValues.get(0).setBalance(DatabaseHelper.getInstance(context).getTotalAccountBalance(false));
+                            AccountRecyclerViewAdapter.this.notifyItemChanged(0);
+                        }
                         return true;
                     case R.id.delete_account:
                         AlertDialog deleteAccount = new AlertDialog.Builder(context)
@@ -220,6 +215,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                                 })
                                 .create();
                         deleteAccount.show();
+
                         return true;
                     case R.id.unarchive_account:
                         boolean accountUnarchivedSuccessfully = DatabaseHelper.getInstance(context).unarchiveAccount(account);
@@ -247,6 +243,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         public final View mView;
         public final TextView mAccountName;
         public final TextView mAccountBalance;
+        public final ImageView mAccountIcon;
         public final ImageView mAccountContextMenu;
         public final View mCreditCardDetails;
         public Account mItem;
@@ -256,6 +253,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
             mView = view;
             mAccountName = view.findViewById(R.id.account_name);
             mAccountBalance = view.findViewById(R.id.account_balance);
+            mAccountIcon = view.findViewById(R.id.account_icon);
             mAccountContextMenu = view.findViewById(R.id.account_context_menu);
             mCreditCardDetails = view.findViewById(R.id.credit_card_details);
         }

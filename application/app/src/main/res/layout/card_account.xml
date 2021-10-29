@@ -16,6 +16,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/account_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:adjustViewBounds="true"
+                android:maxHeight="50dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/account" />
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/account_context_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,7 +51,8 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_toEndOf="@id/account_icon"
                 android:layout_toStartOf="@id/account_balance"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_balance"
@@ -58,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:layout_below="@id/account_name"
+                android:layout_below="@id/account_icon"
                 android:layout_alignParentBottom="true">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/credit_limit_label"
