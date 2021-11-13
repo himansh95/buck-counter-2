@@ -3,6 +3,7 @@ package com.himanshu.buckcounter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Typeface;
 import android.text.Html;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.himanshu.buckcounter.beans.Account;
+import com.himanshu.buckcounter.business.Constants;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 
 import java.util.List;
@@ -80,6 +82,16 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
         } else {
             holder.mCreditCardDetails.setVisibility(View.GONE);
             holder.mAccountIcon.setImageResource(R.mipmap.account);
+        }
+        if (position != 0 && !isArchivedAccountsList) {
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, TransactionsActivity.class);
+                    intent.putExtra(Constants.BUNDLE_ACCOUNTS_NAME, account.getName());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

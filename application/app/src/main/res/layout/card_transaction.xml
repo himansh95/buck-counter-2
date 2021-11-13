@@ -100,7 +100,6 @@
                 android:textAlignment="viewEnd"
                 android:labelFor="@id/balance"
                 android:layout_above="@id/balance"
-                android:layout_alignStart="@id/balance"
                 android:layout_alignParentEnd="true"
                 android:textColor="@color/colorAccent"/>
 

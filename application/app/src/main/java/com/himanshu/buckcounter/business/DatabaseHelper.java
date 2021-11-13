@@ -216,10 +216,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return accounts;
     }
 
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions(String accountName) {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Transaction> transactions = new ArrayList<>();
-        try (Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID + " desc", null)) {
+        Cursor cursor;
+        if (accountName == null) {
+            cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID + " desc", null);
+        } else {
+            cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " where " + KEY_TRANSACTIONS_CR_ACCOUNT + " = ? or " + KEY_TRANSACTIONS_DR_ACCOUNT + " = ? order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID + " desc", new String[]{accountName, accountName});
+        }
+        try {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     transactions.add(new Transaction(
@@ -235,6 +241,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } catch (ParseException e) {
             e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return transactions;
     }
@@ -310,6 +320,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean insertTransaction(Transaction transaction) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        if (transaction.getId() != 0) {
+            contentValues.put(KEY_TRANSACTIONS_ID, transaction.getId());
+        }
         contentValues.put(KEY_TRANSACTIONS_PARTICULARS, transaction.getParticulars());
         contentValues.put(KEY_TRANSACTIONS_AMOUNT, transaction.getAmount());
         contentValues.put(KEY_TRANSACTIONS_TYPE, transaction.getTransactionType().getName());
@@ -336,6 +349,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_TRANSACTIONS_AMOUNT, newAmount);
         return sqLiteDatabase.update(TABLE_TRANSACTIONS, contentValues, KEY_TRANSACTIONS_ID + " = ?", new String[]{String.valueOf(transaction.getId())}) > 0;
+    }
+
+    public Account getAccount(String accountName) {
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_ACCOUNTS + " where " + KEY_ACCOUNTS_NAME + " = ?", new String[]{accountName});
+        Account account = null;
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                account = new Account(
+                        cursor.getString(cursor.getColumnIndex(KEY_ACCOUNTS_NAME)),
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_BALANCE)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_ACCOUNTS_IS_CREDIT_CARD)) == 1,
+                        cursor.getDouble(cursor.getColumnIndex(KEY_ACCOUNTS_CREDIT_LIMIT))
+                );
+            }
+            cursor.close();
+        }
+        return account;
     }
 
     public boolean editAccountName(Account account, String newName) {

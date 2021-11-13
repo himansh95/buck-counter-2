@@ -42,4 +42,15 @@ public class Util {
                 .requestScopes(new Scope(Scopes.DRIVE_FILE), new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
     }
+    public static String capitalizeString(String string) {
+        String[] array = string.split(" ");
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String word: array) {
+            stringBuilder.append(Character.toUpperCase(word.charAt(0)));
+            stringBuilder.append(word.substring(1));
+            stringBuilder.append(" ");
+        }
+        return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
+    }
 }

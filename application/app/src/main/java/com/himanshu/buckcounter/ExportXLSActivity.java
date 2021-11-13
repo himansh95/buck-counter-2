@@ -186,7 +186,7 @@ public class ExportXLSActivity extends AppCompatActivity {
                         public void onSuccess(String s) {
                             String fileName = String.format("Backup_%s.txt", new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(new Date()));
                             List<Account> accounts = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllAccounts(true);
-                            List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions();
+                            List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions(null);
 
                             Backup backup = new Backup(accounts, transactions);
                             Gson gson = new Gson();
@@ -362,7 +362,7 @@ public class ExportXLSActivity extends AppCompatActivity {
             cell.setCellValue(getString(R.string.export_sheet_header_total));
             cell.setCellStyle(cellStyle);
 
-            List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions();
+            List<Transaction> transactions = DatabaseHelper.getInstance(ExportXLSActivity.this).getAllTransactions(null);
             Collections.reverse(transactions);
 
             int currentDebitRow = currentRowIndex;

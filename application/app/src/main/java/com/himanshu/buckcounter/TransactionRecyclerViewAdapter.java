@@ -3,6 +3,7 @@ package com.himanshu.buckcounter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.himanshu.buckcounter.beans.Account;
 import com.himanshu.buckcounter.beans.Transaction;
 import com.himanshu.buckcounter.business.DatabaseHelper;
 import com.himanshu.buckcounter.business.Util;
@@ -31,10 +33,14 @@ import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder> {
     private final List<Transaction> mValues;
     private Context context;
+    private Account account;
 
-    public TransactionRecyclerViewAdapter(List<Transaction> items, Context context) {
+    public TransactionRecyclerViewAdapter(List<Transaction> items, Context context, String accountName) {
         mValues = items;
         this.context = context;
+        if (accountName != null) {
+            this.account = DatabaseHelper.getInstance(context).getAccount(accountName);
+        }
     }
 
     @NonNull
@@ -68,6 +74,20 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
                 showPopupMenu(holder.mTransactionContextMenu, transaction, position);
             }
         });
+        if (account != null) {
+            holder.mBalanceLabel.setVisibility(View.VISIBLE);
+            holder.mBalance.setVisibility(View.VISIBLE);
+            holder.mBalance.setText(DECIMAL_FORMAT.format(account.getBalance()));
+
+            if (transaction.getDebitAccount() != null && transaction.getDebitAccount().equals(account.getName())) {
+                account.setBalance(account.getBalance() - transaction.getAmount());
+            } else if (transaction.getCreditAccount() != null && transaction.getCreditAccount().equals(account.getName())) {
+                account.setBalance(account.getBalance() + transaction.getAmount());
+            }
+        } else {
+            holder.mBalanceLabel.setVisibility(View.GONE);
+            holder.mBalance.setVisibility(View.GONE);
+        }
     }
 
     private void showPopupMenu(View view, final Transaction transaction, final int position) {
@@ -199,6 +219,8 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         public final TextView mTransactionDate;
         public final ImageView mTransactionType;
         public final ImageView mTransactionContextMenu;
+        public final TextView mBalanceLabel;
+        public final TextView mBalance;
         public Transaction mItem;
 
         public ViewHolder (View view) {
@@ -210,6 +232,8 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
             mTransactionDate = view.findViewById(R.id.transaction_date);
             mTransactionType = view.findViewById(R.id.transaction_type);
             mTransactionContextMenu = view.findViewById(R.id.transaction_context_menu);
+            mBalanceLabel = view.findViewById(R.id.balance_label);
+            mBalance = view.findViewById(R.id.balance);
         }
     }
 }

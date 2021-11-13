@@ -33,4 +33,5 @@ public class Constants {
     public static final String VALID_TEXT_REGEX = "[\\w\\s\\d\\~\\`\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\_\\/\\-\\+\\=\\{\\}\\[\\]\\|\\\\\\:\\;\\'\\\"\\<\\>\\,\\.\\?]+";
     public static final String VALID_AMOUNT_REGEX = "^[0-9]+(\\.[0-9]+)?$";
     public static final String VALID_NEGATIVE_AMOUNT_REGEX = "^-?[0-9]+(\\.[0-9]+)?$";
+    public static final String BUNDLE_ACCOUNTS_NAME = "ACCOUNT_NAME";
 }
