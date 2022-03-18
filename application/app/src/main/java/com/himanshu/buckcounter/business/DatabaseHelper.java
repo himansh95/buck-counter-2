@@ -220,15 +220,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         List<Transaction> transactions = new ArrayList<>();
         Cursor cursor;
+        Account account = null;
         if (accountName == null) {
             cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID + " desc", null);
         } else {
             cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_TRANSACTIONS + " where " + KEY_TRANSACTIONS_CR_ACCOUNT + " = ? or " + KEY_TRANSACTIONS_DR_ACCOUNT + " = ? order by " + KEY_TRANSACTIONS_TIMESTAMP + " desc, " + KEY_TRANSACTIONS_ID + " desc", new String[]{accountName, accountName});
+            account = DatabaseHelper.mInstance.getAccount(accountName);
         }
         try {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    transactions.add(new Transaction(
+                    Transaction transaction = new Transaction(
                             cursor.getInt(cursor.getColumnIndex(KEY_TRANSACTIONS_ID)),
                             Transaction.TransactionType.getTransactionType(cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_TYPE))),
                             cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_PARTICULARS)),
@@ -236,7 +238,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             dateFormat.parse(cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_TIMESTAMP))),
                             cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_DR_ACCOUNT)),
                             cursor.getString(cursor.getColumnIndex(KEY_TRANSACTIONS_CR_ACCOUNT))
-                    ));
+                    );
+                    if (account != null) {
+                        transaction.setAccountBalance(account.getBalance());
+
+                        if (transaction.getDebitAccount() != null && transaction.getDebitAccount().equals(account.getName())) {
+                            account.setBalance(account.getBalance() - transaction.getAmount());
+                        } else if (transaction.getCreditAccount() != null && transaction.getCreditAccount().equals(account.getName())) {
+                            account.setBalance(account.getBalance() + transaction.getAmount());
+                        }
+                    }
+                    transactions.add(transaction);
                 }
             }
         } catch (ParseException e) {

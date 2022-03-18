@@ -92,6 +92,8 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<AccountRecy
                     context.startActivity(intent);
                 }
             });
+        } else {
+            holder.mView.setOnClickListener(null);
         }
     }
 

@@ -10,6 +10,7 @@ public class Transaction {
     private Date timestamp;
     private String debitAccount;
     private String creditAccount;
+    private double accountBalance;
 
     public Transaction() {
     }
@@ -116,6 +117,14 @@ public class Transaction {
 
     public void setCreditAccount(String creditAccount) {
         this.creditAccount = creditAccount;
+    }
+
+    public double getAccountBalance() {
+        return accountBalance;
+    }
+
+    public void setAccountBalance(double accountBalance) {
+        this.accountBalance = accountBalance;
     }
 
     @Override

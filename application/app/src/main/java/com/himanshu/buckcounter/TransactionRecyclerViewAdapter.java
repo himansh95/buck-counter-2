@@ -3,6 +3,7 @@ package com.himanshu.buckcounter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -33,14 +34,12 @@ import static com.himanshu.buckcounter.business.Constants.VALID_TEXT_REGEX;
 public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder> {
     private final List<Transaction> mValues;
     private Context context;
-    private Account account;
+    private String accountName;
 
     public TransactionRecyclerViewAdapter(List<Transaction> items, Context context, String accountName) {
         mValues = items;
         this.context = context;
-        if (accountName != null) {
-            this.account = DatabaseHelper.getInstance(context).getAccount(accountName);
-        }
+        this.accountName = accountName;
     }
 
     @NonNull
@@ -55,38 +54,49 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Transaction transaction = mValues.get(position);
         holder.mItem = transaction;
-        holder.mTransactionAmount.setText(DECIMAL_FORMAT.format(transaction.getAmount()));
-        holder.mTransactionParticulars.setText(transaction.getParticulars());
-        holder.mTransactionDate.setText(DATE_FORMAT.format(transaction.getTimestamp()));
-        if (transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
-            holder.mTransactionType.setImageResource(R.mipmap.transaction_contra);
-            holder.mTransactionAccount.setText(new StringBuffer(transaction.getCreditAccount()).append(Util.fromHtml("&nbsp;&#10132;&nbsp;")).append(transaction.getDebitAccount()));
-        } else if (transaction.getTransactionType() == Transaction.TransactionType.DR) {
-            holder.mTransactionType.setImageResource(R.mipmap.transaction_debit);
-            holder.mTransactionAccount.setText(transaction.getDebitAccount());
-        } else if (transaction.getTransactionType() == Transaction.TransactionType.CR) {
-            holder.mTransactionType.setImageResource(R.mipmap.transaction_credit);
+        if (position == 0 && accountName != null) {
+            holder.mTransactionAmount.setText(DECIMAL_FORMAT.format(transaction.getAmount()));
             holder.mTransactionAccount.setText(transaction.getCreditAccount());
-        }
-        holder.mTransactionContextMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupMenu(holder.mTransactionContextMenu, transaction, position);
-            }
-        });
-        if (account != null) {
-            holder.mBalanceLabel.setVisibility(View.VISIBLE);
-            holder.mBalance.setVisibility(View.VISIBLE);
-            holder.mBalance.setText(DECIMAL_FORMAT.format(account.getBalance()));
-
-            if (transaction.getDebitAccount() != null && transaction.getDebitAccount().equals(account.getName())) {
-                account.setBalance(account.getBalance() - transaction.getAmount());
-            } else if (transaction.getCreditAccount() != null && transaction.getCreditAccount().equals(account.getName())) {
-                account.setBalance(account.getBalance() + transaction.getAmount());
-            }
-        } else {
+            holder.mTransactionAccount.setTypeface(null, Typeface.BOLD);
+            holder.mTransactionContextMenu.setVisibility(View.GONE);
+            holder.mTransactionDate.setVisibility(View.GONE);
+            holder.mTransactionParticulars.setVisibility(View.GONE);
+            holder.mTransactionType.setVisibility(View.GONE);
             holder.mBalanceLabel.setVisibility(View.GONE);
             holder.mBalance.setVisibility(View.GONE);
+        } else {
+            holder.mTransactionContextMenu.setVisibility(View.VISIBLE);
+            holder.mTransactionDate.setVisibility(View.VISIBLE);
+            holder.mTransactionParticulars.setVisibility(View.VISIBLE);
+            holder.mTransactionType.setVisibility(View.VISIBLE);
+            holder.mTransactionAccount.setTypeface(null, Typeface.NORMAL);
+            holder.mTransactionAmount.setText(DECIMAL_FORMAT.format(transaction.getAmount()));
+            holder.mTransactionParticulars.setText(transaction.getParticulars());
+            holder.mTransactionDate.setText(DATE_FORMAT.format(transaction.getTimestamp()));
+            if (transaction.getTransactionType() == Transaction.TransactionType.CONTRA) {
+                holder.mTransactionType.setImageResource(R.mipmap.transaction_contra);
+                holder.mTransactionAccount.setText(new StringBuffer(transaction.getCreditAccount()).append(Util.fromHtml("&nbsp;&#10132;&nbsp;")).append(transaction.getDebitAccount()));
+            } else if (transaction.getTransactionType() == Transaction.TransactionType.DR) {
+                holder.mTransactionType.setImageResource(R.mipmap.transaction_debit);
+                holder.mTransactionAccount.setText(transaction.getDebitAccount());
+            } else if (transaction.getTransactionType() == Transaction.TransactionType.CR) {
+                holder.mTransactionType.setImageResource(R.mipmap.transaction_credit);
+                holder.mTransactionAccount.setText(transaction.getCreditAccount());
+            }
+            holder.mTransactionContextMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showPopupMenu(holder.mTransactionContextMenu, transaction, position);
+                }
+            });
+            if (accountName != null) {
+                holder.mBalanceLabel.setVisibility(View.VISIBLE);
+                holder.mBalance.setVisibility(View.VISIBLE);
+                holder.mBalance.setText(DECIMAL_FORMAT.format(transaction.getAccountBalance()));
+            } else {
+                holder.mBalanceLabel.setVisibility(View.GONE);
+                holder.mBalance.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -168,8 +178,9 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
                                         }
                                         boolean editParticularsSuccessful = DatabaseHelper.getInstance(context).editTransactionAmount(transaction, newAmount);
                                         if (editParticularsSuccessful) {
-                                            mValues.get(position).setAmount(newAmount);
-                                            TransactionRecyclerViewAdapter.this.notifyItemChanged(position);
+                                            mValues.clear();
+                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllTransactions(accountName));
+                                            TransactionRecyclerViewAdapter.this.notifyDataSetChanged();
                                         }
                                         editAmount.dismiss();
                                     }
@@ -189,9 +200,9 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         boolean transactionDeletedSuccessfully = DatabaseHelper.getInstance(context).deleteTransaction(transaction);
                                         if(transactionDeletedSuccessfully) {
-                                            mValues.remove(position);
-                                            TransactionRecyclerViewAdapter.this.notifyItemRemoved(position);
-                                            TransactionRecyclerViewAdapter.this.notifyItemRangeChanged(position, getItemCount() - position);
+                                            mValues.clear();
+                                            mValues.addAll(DatabaseHelper.getInstance(context).getAllTransactions(accountName));
+                                            TransactionRecyclerViewAdapter.this.notifyDataSetChanged();
                                         }
                                     }
                                 })

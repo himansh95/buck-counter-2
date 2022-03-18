@@ -85,7 +85,6 @@ public class SignInActivity extends AppCompatActivity {
         if (account != null) {
             Toast.makeText(this, "Welcome back: " + account.getEmail(), Toast.LENGTH_LONG).show();
         }
-        Log.i(TAG, "here");
         startActivity(intent);
     }
 
