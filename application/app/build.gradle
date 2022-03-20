@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -31,6 +32,7 @@ android {
 
 dependencies {
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.android.gms:play-services-auth:19.0.0'

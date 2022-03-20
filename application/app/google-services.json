@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "470518007629",
+    "project_id": "androidapp-2b984",
+    "storage_bucket": "androidapp-2b984.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470518007629:android:88f56c47483a2c76a85904",
+        "android_client_info": {
+          "package_name": "com.himanshu.buckcounter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "470518007629-vkko5f315ft1b02fjr98t58j5cc9972l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH23KkX2n9q7w5zy6cIXNpFgzivpko-sU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "470518007629-vkko5f315ft1b02fjr98t58j5cc9972l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
